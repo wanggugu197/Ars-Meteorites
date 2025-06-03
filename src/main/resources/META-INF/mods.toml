@@ -1,0 +1,11 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="GNU GPLv3.0"
+
+[[mods]]
+modId="arsmeteorites"
+version="0.1"
+displayName="Ars Meteorites"
+description="An addon for Ars Nouveau adding meteorite magic"
+authors="maple197"
+credits=""

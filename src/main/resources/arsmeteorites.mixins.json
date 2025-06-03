@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.arsmeteorites.arsmeteorites.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "arsmeteorites.refmap.json",
+  "mixins": [
+    "APIRegistryMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 5
+  }
+}

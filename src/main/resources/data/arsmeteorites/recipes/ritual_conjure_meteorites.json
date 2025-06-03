@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ars_nouveau:red_archwood_log"
+    },
+    {
+      "item": "ars_nouveau:ritual_scrying"
+    },
+    {
+      "item": "ars_nouveau:ritual_warping"
+    },
+    {
+      "item": "ars_nouveau:ritual_wilden_summon"
+    },
+    {
+      "item": "minecraft:lodestone"
+    },
+    {
+      "item": "ars_nouveau:manipulation_essence"
+    },
+    {
+      "item": "ars_nouveau:conjuration_essence"
+    },
+    {
+      "item": "ars_nouveau:source_gem_block"
+    },
+    {
+      "item": "ars_nouveau:source_gem_block"
+    }
+  ],
+  "result": {
+    "item": "arsmeteorites:ritual_conjure_meteorites"
+  }
+}

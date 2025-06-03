@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "arsmeteorites:item/ritual_conjure_meteorites"
+  }
+}
