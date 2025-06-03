@@ -21,27 +21,19 @@ import com.hollingsworth.arsnouveau.api.util.SourceUtil;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class ConjureMeteoritesRitual extends AbstractRitual {
 
     private int TargetRadius = 7;
-    private int MaxRadius = 30;
     private int SourceCost = 5;
-    private int defaultMeteoriteType = 0;
     private Item ConsumeItem = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(
             new ResourceLocation("ars_nouveau:source_gem")));
+    private RecipeRegistry.MeteoriteType currentMeteoriteType;
 
     private int CurrentRadius = 0;
     private BlockPos center;
     private boolean isSafeToGenerate = false;
-
-    private MeteoritesList currentMeteoriteType;
-
-    private static final List<MeteoritesList> METEORITE_TYPES = RecipeRegistry.METEORITE_TYPES;
-    private static final Map<String, Integer> WEIGHT_SUM_CACHE = RecipeRegistry.WEIGHT_SUM_CACHE;
 
     @Override
     public void onStart(@Nullable Player player) {
@@ -49,24 +41,21 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         Level world = getWorld();
         if (world != null && world.isClientSide) return;
 
-        this.TargetRadius = MeteoriteRitualConfig.BASE_RADIUS.get();
-        this.MaxRadius = MeteoriteRitualConfig.MAX_RADIUS.get();
-        this.SourceCost = MeteoriteRitualConfig.SOURCE_COST_PER_BLOCK.get();
-        this.defaultMeteoriteType = MeteoriteRitualConfig.DEFAULT_METEORITE_TYPE.get();
-        this.ConsumeItem = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(
-                new ResourceLocation(MeteoriteRitualConfig.RADIUS_INCREASE_ITEM.get())));
+        TargetRadius = MeteoriteRitualConfig.BASE_RADIUS.get();
+        SourceCost = MeteoriteRitualConfig.SOURCE_COST_PER_BLOCK.get();
+        ConsumeItem = ForgeRegistries.ITEMS.getValue(
+                new ResourceLocation(MeteoriteRitualConfig.RADIUS_INCREASE_ITEM.get()));
 
-        currentMeteoriteType = METEORITE_TYPES.get(defaultMeteoriteType);
+        currentMeteoriteType = RecipeRegistry.getTypeById("default");
 
         for (ItemStack stack : getConsumedItems()) {
             if (stack.is(ConsumeItem)) {
-                TargetRadius = Math.min(TargetRadius + stack.getCount(), MaxRadius);
+                TargetRadius = Math.min(TargetRadius + stack.getCount(), MeteoriteRitualConfig.MAX_RADIUS.get());
             } else {
-                for (MeteoritesList type : METEORITE_TYPES) {
-                    if (type.input() != null && stack.is(type.input())) {
-                        currentMeteoriteType = type;
-                        break;
-                    }
+                RecipeRegistry.MeteoriteType type = RecipeRegistry.getTypeByInput(stack.getItem());
+                if (type != null) {
+                    currentMeteoriteType = type;
+                    SourceCost = type.source();
                 }
             }
         }
@@ -76,7 +65,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
     protected void tick() {
         Level world = getWorld();
 
-        if (world.getGameTime() % 2 == 0 && !world.isClientSide) {
+        if (world != null && world.getGameTime() % 2 == 0 && !world.isClientSide) {
 
             int high = TargetRadius * 2;
 
@@ -88,11 +77,11 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
                     setFinished();
                 } else {
                     isSafeToGenerate = true;
-                    CurrentRadius = TargetRadius;
+                    CurrentRadius = 0;
                 }
             }
 
-            if (CurrentRadius < 0) {
+            if (CurrentRadius >= TargetRadius) {
                 world.playSound(null, getPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0f, 0.5f);
                 setFinished();
                 return;
@@ -100,7 +89,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
             int blocksGenerated = generateMeteoriteLayer(world, CurrentRadius);
 
-            CurrentRadius--;
+            CurrentRadius++;
 
             int sourceCost = Math.max(1, blocksGenerated * SourceCost);
             if (consumeSource(world, center, sourceCost)) {
@@ -110,10 +99,17 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             }
         }
 
-        world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 1.0f, 0.8f);
+        if (world != null) {
+            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 1.0f, 0.8f);
+        }
     }
 
     private int generateMeteoriteLayer(Level world, int radius) {
+        if (radius == 0) {
+            world.setBlock(center, getRandomMeteoriteBlock(), 3);
+            return 1;
+        }
+
         int blocksGenerated = 0;
         int radiusSq = radius * radius;
         int innerRadiusSq = (radius - 1) * (radius - 1);
@@ -130,13 +126,9 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
                 if (xySq > radiusSq) continue;
 
                 for (int z = -radius; z <= radius; z++) {
-                    int zSq = z * z;
-                    int distanceSq = xySq + zSq;
-
-                    if (distanceSq <= radiusSq && (radius == TargetRadius || distanceSq > innerRadiusSq)) {
-                        BlockPos pos = center.offset(x, y, z);
-                        BlockState state = getRandomMeteoriteBlock();
-                        world.setBlock(pos, state, 3);
+                    int distanceSq = xySq + z * z;
+                    if (distanceSq <= radiusSq && distanceSq > innerRadiusSq) {
+                        world.setBlock(center.offset(x, y, z), getRandomMeteoriteBlock(), 3);
                         blocksGenerated++;
                     }
                 }
@@ -146,17 +138,12 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
     }
 
     private BlockState getRandomMeteoriteBlock() {
-        Block[] blocks = currentMeteoriteType.Meteorites();
-        int[] weights = currentMeteoriteType.Probability();
+        int totalWeight = currentMeteoriteType.totalWeight();
+        Block[] blocks = currentMeteoriteType.meteorites();
+        int[] weights = currentMeteoriteType.weights();
 
-        Integer totalWeight = WEIGHT_SUM_CACHE.get(currentMeteoriteType.id());
-        if (totalWeight == null || totalWeight == 0) {
-
-            totalWeight = 0;
-            for (int weight : weights) {
-                totalWeight += weight;
-            }
-            WEIGHT_SUM_CACHE.put(currentMeteoriteType.id(), totalWeight);
+        if (totalWeight <= 0 || blocks.length == 0) {
+            return blocks[0].defaultBlockState();
         }
 
         int randomValue = rand.nextInt(totalWeight);
@@ -223,12 +210,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         if (stack.is(ConsumeItem)) {
             return true;
         }
-        for (MeteoritesList type : METEORITE_TYPES) {
-            if (type.input() != null && stack.is(type.input())) {
-                return true;
-            }
-        }
-        return false;
+        return RecipeRegistry.getTypeByInput(stack.getItem()) != null;
     }
 
     @Override
@@ -260,6 +242,4 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
     public int getParticleIntensity() {
         return 250;
     }
-
-    public record MeteoritesList(String id, Item input, Block[] Meteorites, int[] Probability) {}
 }

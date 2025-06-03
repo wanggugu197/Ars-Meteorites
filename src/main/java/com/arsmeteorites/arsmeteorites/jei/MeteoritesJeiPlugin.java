@@ -1,7 +1,6 @@
 package com.arsmeteorites.arsmeteorites.jei;
 
 import com.arsmeteorites.arsmeteorites.ArsMeteorites;
-import com.arsmeteorites.arsmeteorites.common.ConjureMeteoritesRitual;
 import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
 
 import net.minecraft.resources.ResourceLocation;
@@ -16,12 +15,13 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 @JeiPlugin
 public class MeteoritesJeiPlugin implements IModPlugin {
 
-    public static final RecipeType<ConjureMeteoritesRitual.MeteoritesList> METEORITES_RECIPE_TYPE = RecipeType.create(ArsMeteorites.MOD_ID, "meteorites", ConjureMeteoritesRitual.MeteoritesList.class);
+    public static final RecipeType<RecipeRegistry.MeteoriteType> METEORITES_RECIPE_TYPE = RecipeType.create(ArsMeteorites.MOD_ID, "meteorites", RecipeRegistry.MeteoriteType.class);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -35,7 +35,8 @@ public class MeteoritesJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(METEORITES_RECIPE_TYPE, RecipeRegistry.METEORITE_TYPES);
+        // 使用新的 getAllTypes() 方法
+        registration.addRecipes(METEORITES_RECIPE_TYPE, List.copyOf(RecipeRegistry.getAllTypes()));
     }
 
     @Override

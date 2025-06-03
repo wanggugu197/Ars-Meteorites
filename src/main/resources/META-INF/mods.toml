@@ -7,5 +7,11 @@ modId="arsmeteorites"
 version="0.1"
 displayName="Ars Meteorites"
 description="An addon for Ars Nouveau adding meteorite magic"
+displayURL = "${mod_url}"
 authors="maple197"
 credits=""
+
+[[dependencies.arsmeteorites]]
+modId="ars_nouveau"
+versionRange="[4.12.6,)"
+mandatory=true

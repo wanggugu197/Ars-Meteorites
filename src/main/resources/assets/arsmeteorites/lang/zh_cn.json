@@ -2,5 +2,6 @@
   "item.arsmeteorites.ritual_conjure_meteorites": "陨星",
   "arsmeteorites.ritual_desc.ritual_conjure_meteorites": "从世界夹层中召唤一个巨大的陨石。\n仪式前请保持上空空旷，否则会发生剧烈爆炸。\n消耗魔源宝石扩大陨石半径，基础半径7，最大半径30。\n根据方块生成数量消耗魔源。",
   "jei.category.arsmeteorites.meteorites": "召唤陨石",
+  "jei.arsmeteorites.source_cost": "%s 魔源每块",
   "tooltip.arsmeteorites.probability": "权重：%s"
 }

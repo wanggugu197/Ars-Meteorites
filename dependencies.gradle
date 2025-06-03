@@ -1,8 +1,6 @@
 dependencies {
     compileOnly libs.jetbrains.annotations
 
-    jarJar("dev:ManaPeeper:1.4+1.20.1-forge")
-
     api(annotationProcessor("io.github.llamalad7:mixinextras-common:$project.mixinextras_version"))
     annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
 
