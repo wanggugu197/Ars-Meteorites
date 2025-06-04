@@ -1,4 +1,3 @@
-// RecipeRegistry.java
 package com.arsmeteorites.arsmeteorites.common;
 
 import com.arsmeteorites.arsmeteorites.MeteoriteRitualConfig;
@@ -25,14 +24,7 @@ public class RecipeRegistry {
                                 int source,
                                 Block[] meteorites,
                                 int[] weights,
-                                int totalWeight) {
-
-        public MeteoriteType {
-            if (meteorites.length != weights.length) {
-                throw new IllegalArgumentException("Meteorites and weights array lengths must match");
-            }
-        }
-    }
+                                int totalWeight) {}
 
     private static final Map<String, MeteoriteType> TYPE_BY_ID = new HashMap<>();
     private static final Map<Item, MeteoriteType> TYPE_BY_INPUT = new HashMap<>();
@@ -56,23 +48,24 @@ public class RecipeRegistry {
         return type != null ? type.totalWeight() : 0;
     }
 
+    public static void registerMeteoriteType(MeteoriteType type) {
+        MeteoriteType oldTypeById = TYPE_BY_ID.get(type.id());
+        if (oldTypeById != null) {
+            TYPE_BY_INPUT.remove(oldTypeById.input());
+            TYPE_BY_INPUT.put(type.input(), type);
+            // LOGGER.warn("覆盖已存在的陨石类型: {}", type.id());
+        } else {
+            TYPE_BY_ID.put(type.id(), type);
+            TYPE_BY_INPUT.put(type.input(), type);
+            // LOGGER.info("成功注册陨石类型: {} (输入物品: {})", type.id(), type.input());
+        }
+    }
+
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         if (MeteoriteRitualConfig.ENABLE_RECIPE.get()) {
             BasicFormulaRegistration();
             LinkageFormulaRegistration();
         }
-    }
-
-    public static void registerMeteoriteType(MeteoriteType type) {
-        if (TYPE_BY_ID.containsKey(type.id())) {
-            throw new IllegalStateException("Duplicate meteorite type ID: " + type.id());
-        }
-        if (TYPE_BY_INPUT.containsKey(type.input())) {
-            throw new IllegalStateException("Duplicate input item for meteorite type: " + type.input());
-        }
-
-        TYPE_BY_ID.put(type.id(), type);
-        TYPE_BY_INPUT.put(type.input(), type);
     }
 }

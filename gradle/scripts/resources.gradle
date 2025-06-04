@@ -4,12 +4,10 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_id                  : mod_id,
             mod_license             : mod_license,
             mod_name                : mod_name,
-            mod_authors             : mod_authors
+            mod_authors             : mod_authors,
+            mod_url                 : mod_url
     ]
     inputs.properties replaceProperties
-    expand replaceProperties
-    from "src/main/templates"
-    into "build/generated/sources/modMetadata"
 }
 sourceSets.main.resources.srcDir generateModMetadata
 legacyForge.ideSyncTask generateModMetadata

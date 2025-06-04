@@ -3,5 +3,6 @@
   "arsmeteorites.ritual_desc.ritual_conjure_meteorites": "Summons a massive meteorite from the world's inner workings.\nPlease keep the sky clear before the ceremony, otherwise a violent explosion may occur.\nConsume magic source gems to expand the radius of the meteorite. The basic radius is 7 and the maximum radius is 30.\nMana source is consumed according to the number of blocks generated.",
   "jei.category.arsmeteorites.meteorites": "Conjure Meteorites",
   "jei.arsmeteorites.source_cost": "%s Source Each Block",
+  "emi.category.arsmeteorites.meteorites": "Conjure Meteorites",
   "tooltip.arsmeteorites.probability": "Weight:%s"
 }

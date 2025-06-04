@@ -17,13 +17,13 @@
       "item": "minecraft:lodestone"
     },
     {
+      "item": "ars_nouveau:wilden_tribute"
+    },
+    {
       "item": "ars_nouveau:manipulation_essence"
     },
     {
       "item": "ars_nouveau:conjuration_essence"
-    },
-    {
-      "item": "ars_nouveau:source_gem_block"
     },
     {
       "item": "ars_nouveau:source_gem_block"

@@ -1,13 +1,16 @@
 package com.arsmeteorites.arsmeteorites.jei;
 
+import com.arsmeteorites.arsmeteorites.ArsMeteorites;
 import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -20,16 +23,16 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.MeteoriteType> {
 
     private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
-    private final IGuiHelper guiHelper;
     private final Font font;
 
     public MeteoritesRecipeCategory(IGuiHelper guiHelper) {
-        this.guiHelper = guiHelper;
         this.background = guiHelper.createBlankDrawable(150, 145);
         this.icon = guiHelper.createDrawableItemStack(
                 new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem()));
@@ -38,7 +41,7 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
     }
 
     @Override
-    public RecipeType<RecipeRegistry.MeteoriteType> getRecipeType() {
+    public @NotNull RecipeType<RecipeRegistry.MeteoriteType> getRecipeType() {
         return MeteoritesJeiPlugin.METEORITES_RECIPE_TYPE;
     }
 
@@ -48,41 +51,23 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
     }
 
     @Override
-    public IDrawable getBackground() {
-        return background;
-    }
-
-    @Override
     public IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void draw(RecipeRegistry.MeteoriteType recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        // 绘制每块魔源的消耗信息
+    public void draw(RecipeRegistry.MeteoriteType recipe, @NotNull IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         Component costText = Component.translatable("jei.arsmeteorites.source_cost", recipe.source());
-        int xPos = (background.getWidth() - font.width(costText)) / 2;
-        guiGraphics.drawString(font, costText, 20, background.getHeight() - 10, 0xFFFFFF, false);
+        guiGraphics.drawString(font, costText, 20, background.getHeight() - 12, 0xFFFFFF, false);
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeRegistry.MeteoriteType recipe, @NotNull IFocusGroup focuses) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, RecipeRegistry.MeteoriteType recipe, @NotNull IFocusGroup focuses) {
         int backgroundWidth = 150;
         int backgroundHeight = 145;
 
-        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 2, backgroundHeight - 18)
-                .addItemStack(new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem()));
-
-        if (recipe.input() != null) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 2, backgroundHeight - 34)
-                    .addItemStack(new ItemStack(recipe.input()));
-        }
-
         Block[] meteorites = recipe.meteorites();
         int[] probabilities = recipe.weights();
-
-        int centerX = backgroundWidth / 2 - 8;
-        int centerY = backgroundHeight / 2 - 8;
 
         int[][] circles = {
                 { 19, 8, 0 },
@@ -93,6 +78,9 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
 
         int remainingItems = meteorites.length;
         int currentCircle = 0;
+
+        int centerX = backgroundWidth / 2 - 8;
+        int centerY = backgroundHeight / 2 - 8;
 
         while (remainingItems > 0 && currentCircle < circles.length) {
             int radius = circles[currentCircle][0];
@@ -110,13 +98,23 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
                 int itemIndex = meteorites.length - remainingItems + i;
 
                 builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
-                        .addItemStack(new ItemStack(meteorites[itemIndex])).addTooltipCallback((recipeSlotView, tooltip) -> {
-                            tooltip.add(Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex]));
-                        });
+                        .addItemStack(new ItemStack(meteorites[itemIndex])).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex])));
             }
 
             remainingItems -= itemsInThisCircle;
             currentCircle++;
+        }
+
+        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 2, backgroundHeight - 18)
+                .addItemStack(new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem()));
+
+        builder.addSlot(RecipeIngredientRole.CATALYST, 2, backgroundHeight - 34)
+                .addItemStack(new ItemStack(Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(
+                        new ResourceLocation(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites")))));
+
+        if (recipe.input() != null) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 2, backgroundHeight - 50)
+                    .addItemStack(new ItemStack(recipe.input()));
         }
     }
 }

@@ -1,4 +1,3 @@
-// MeteoriteRegistryHelper.java
 package com.arsmeteorites.arsmeteorites.common.recipe.builder;
 
 import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
@@ -18,7 +17,6 @@ public final class MeteoriteRegistryHelper {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    // 资源缓存减少注册表查询
     private static final Map<String, Item> ITEM_CACHE = new HashMap<>();
     private static final Map<String, Block> BLOCK_CACHE = new HashMap<>();
 
@@ -64,13 +62,12 @@ public final class MeteoriteRegistryHelper {
         try {
             RecipeRegistry.registerMeteoriteType(
                     new RecipeRegistry.MeteoriteType(id, input, source, meteorites, weights, totalWeight));
-            LOGGER.info("成功注册陨石类型: {}", id);
         } catch (IllegalStateException e) {
             LOGGER.error("注册陨石类型失败: {}", e.getMessage());
         }
     }
 
-    private static String generateNormalizedId(String itemId) {
+    public static String generateNormalizedId(String itemId) {
         return itemId.replace(':', '-');
     }
 
