@@ -1,61 +1,101 @@
 package com.arsmeteorites.arsmeteorites.common.recipe.builder;
 
+import com.arsmeteorites.arsmeteorites.ArsMeteorites;
 import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public final class MeteoriteRegistryHelper {
+public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Gson GSON = new Gson();
 
-    private static final Map<String, Item> ITEM_CACHE = new HashMap<>();
-    private static final Map<String, Block> BLOCK_CACHE = new HashMap<>();
+    public MeteoriteRegistryHelper() {
+        super(GSON, "meteorite_recipes");
+    }
+
+    @Override
+    protected void apply(Map<ResourceLocation, JsonElement> entries, @NotNull ResourceManager manager, @NotNull ProfilerFiller profiler) {
+        ArsMeteorites.LOGGER.info("正在加载数据包陨石配方...");
+
+        for (Map.Entry<ResourceLocation, JsonElement> entry : entries.entrySet()) {
+            ResourceLocation recipeId = entry.getKey();
+            JsonObject json = entry.getValue().getAsJsonObject();
+
+            try {
+                dataMeteoriteRecipe recipe = dataMeteoriteRecipe.fromJson(json);
+                registerMeteoriteType(
+                        recipe.inputItemId(),
+                        recipe.source(),
+                        recipe.meteoriteBlockIds(),
+                        recipe.weights());
+            } catch (Exception e) {
+                ArsMeteorites.LOGGER.error("加载配方 {} 失败", recipeId);
+            }
+        }
+
+        ArsMeteorites.LOGGER.info("已加载 {} 个陨石配方", entries.size());
+    }
 
     public static void registerMeteoriteType(
                                              String inputItemId,
-                                             int source,
+                                             double source,
                                              String[] blockIds,
                                              int[] weights) {
         String normalizedId = generateNormalizedId(inputItemId);
 
-        Item input = resolveItem(inputItemId);
+        Item input = ForgeRegistries.ITEMS.getValue(new ResourceLocation(inputItemId));
         if (input == null) {
-            LOGGER.error("无法注册陨石类型 {}: 物品 {} 不存在", normalizedId, inputItemId);
+            ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 物品 {} 不存在", normalizedId, inputItemId);
             return;
         }
 
         Block[] blocks = new Block[blockIds.length];
         for (int i = 0; i < blockIds.length; i++) {
-            blocks[i] = resolveBlock(blockIds[i]);
-            if (blocks[i] == null) {
-                LOGGER.error("无法注册陨石类型 {}: 方块 {} 不存在", normalizedId, blockIds[i]);
+            blocks[i] = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockIds[i]));
+            if (blocks[i] == Blocks.AIR) {
+                ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 方块 {} 不存在", normalizedId, blockIds[i]);
                 return;
             }
-        }
-
-        if (weights.length != blockIds.length) {
-            LOGGER.error("无法注册陨石类型 {}: 权重数组长度不匹配", normalizedId);
-            return;
         }
 
         registerMeteoriteType(normalizedId, input, source, blocks, weights);
     }
 
     public static void registerMeteoriteType(
-                                             String id,
                                              Item input,
-                                             int source,
+                                             double source,
                                              Block[] meteorites,
                                              int[] weights) {
+        String normalizedId = generateNormalizedId(input);
+
+        registerMeteoriteType(normalizedId, input, source, meteorites, weights);
+    }
+
+    public static void registerMeteoriteType(
+                                             String id,
+                                             Item input,
+                                             double source,
+                                             Block[] meteorites,
+                                             int[] weights) {
+        if (weights.length != meteorites.length) {
+            ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 权重数组长度不匹配", id);
+            return;
+        }
+
         int totalWeight = 0;
         for (int weight : weights) totalWeight += weight;
 
@@ -63,7 +103,7 @@ public final class MeteoriteRegistryHelper {
             RecipeRegistry.registerMeteoriteType(
                     new RecipeRegistry.MeteoriteType(id, input, source, meteorites, weights, totalWeight));
         } catch (IllegalStateException e) {
-            LOGGER.error("注册陨石类型失败: {}", e.getMessage());
+            ArsMeteorites.LOGGER.error("注册陨石类型失败: {}", id);
         }
     }
 
@@ -71,11 +111,12 @@ public final class MeteoriteRegistryHelper {
         return itemId.replace(':', '-');
     }
 
-    private static Item resolveItem(String itemId) {
-        return ITEM_CACHE.computeIfAbsent(itemId, id -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(id)));
-    }
-
-    private static Block resolveBlock(String blockId) {
-        return BLOCK_CACHE.computeIfAbsent(blockId, id -> ForgeRegistries.BLOCKS.getValue(new ResourceLocation(id)));
+    public static String generateNormalizedId(Item item) {
+        if (item != null) {
+            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
+            return itemId.getNamespace() + "-" + itemId.getPath();
+        } else {
+            return "default";
+        }
     }
 }

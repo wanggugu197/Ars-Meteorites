@@ -1,6 +1,7 @@
 package com.arsmeteorites.arsmeteorites.emi;
 
 import com.arsmeteorites.arsmeteorites.ArsMeteorites;
+import com.arsmeteorites.arsmeteorites.MeteoriteRitualConfig;
 import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
 
 import net.minecraft.network.chat.Component;
@@ -31,8 +32,11 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
 
     public MeteoritesEmiRecipe(RecipeRegistry.MeteoriteType recipe) {
         this.recipe = recipe;
-        this.id = new ResourceLocation(ArsMeteorites.MOD_ID, recipe.id().toLowerCase());
+        this.id = new ResourceLocation(ArsMeteorites.MOD_ID, "/" + recipe.id().toLowerCase());
     }
+
+    private final Item ConsumeItem = ForgeRegistries.ITEMS.getValue(
+            new ResourceLocation(MeteoriteRitualConfig.RADIUS_INCREASE_ITEM.get()));
 
     @Override
     public EmiRecipeCategory getCategory() {
@@ -91,8 +95,8 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
         int remainingItems = meteorites.length;
         int currentCircle = 0;
 
-        int centerX = remainingItems >= 50 ? backgroundWidth / 2 - 8 : backgroundHeight / 2 + 8;
-        int centerY = remainingItems >= 50 ? backgroundHeight / 2 - 8 : backgroundHeight / 2 - 24;
+        int centerX = backgroundWidth / 2 - 8;
+        int centerY = backgroundHeight / 2 - 8;
 
         while (remainingItems > 0 && currentCircle < circles.length) {
             int radius = circles[currentCircle][0];
@@ -110,25 +114,28 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
                 int itemIndex = meteorites.length - remainingItems + i;
 
                 widgets.addSlot(EmiStack.of(meteorites[itemIndex]), x, y)
-                        .appendTooltip(Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex])).drawBack(false);
+                        .appendTooltip(Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex])).recipeContext(this).drawBack(false);
             }
 
             remainingItems -= itemsInThisCircle;
             currentCircle++;
         }
 
-        int Lower = remainingItems >= 50 ? backgroundHeight : backgroundHeight - 10;
+        widgets.addSlot(EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()), 2, backgroundHeight - 18).drawBack(false);
 
-        widgets.addSlot(EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()), 2, Lower - 18).drawBack(false);
-
-        widgets.addSlot(EmiStack.of(Catalysts), 2, Lower - 34).drawBack(false);
+        widgets.addSlot(EmiStack.of(Catalysts), 2, backgroundHeight - 34).drawBack(false);
 
         if (recipe.input() != null) {
-            widgets.addSlot(EmiStack.of(recipe.input()), 2, Lower - 50).drawBack(false);
+            widgets.addSlot(EmiStack.of(recipe.input()), 2, backgroundHeight - 50).drawBack(false);
+        }
+
+        if (ConsumeItem != null) {
+            widgets.addSlot(EmiStack.of(ConsumeItem), 18, backgroundHeight - 34)
+                    .appendTooltip(Component.translatable("tooltip.arsmeteorites.source_gem")).recipeContext(this).drawBack(false);
         }
 
         widgets.addText(
                 Component.translatable("jei.arsmeteorites.source_cost", recipe.source()),
-                20, Lower - 12, 0xFFFFFF, false);
+                20, backgroundHeight - 12, 0xFFFFFF, false);
     }
 }

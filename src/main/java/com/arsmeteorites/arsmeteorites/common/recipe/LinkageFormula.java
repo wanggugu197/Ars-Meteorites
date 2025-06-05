@@ -40,14 +40,6 @@ public class LinkageFormula {
                 new int[] { 120, 20, 80, 40, 5, 5, 20, 80, 40, 5, 5, 20, 80, 40, 5, 5, 20, 80, 40, 5, 5, });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                "ars_nouveau:archwood_planks",
-                50,
-                new String[] {
-                        "ars_nouveau:archwood_planks",
-                },
-                new int[] { 120 });
-
-        MeteoriteRegistryHelper.registerMeteoriteType(
                 "ars_nouveau:sourcestone",
                 200,
                 new String[] {

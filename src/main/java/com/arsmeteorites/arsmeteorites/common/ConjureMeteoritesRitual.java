@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,9 +27,9 @@ import java.util.Objects;
 public class ConjureMeteoritesRitual extends AbstractRitual {
 
     private int TargetRadius = 7;
-    private int SourceCost = 5;
-    private Item ConsumeItem = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(
-            new ResourceLocation("ars_nouveau:source_gem")));
+    private double SourceCost = 5;
+    private Item ConsumeItem = ForgeRegistries.ITEMS.getValue(
+            new ResourceLocation("ars_nouveau:source_gem"));
     private RecipeRegistry.MeteoriteType currentMeteoriteType;
 
     private int CurrentRadius = 0;
@@ -42,11 +43,10 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         if (world != null && world.isClientSide) return;
 
         TargetRadius = MeteoriteRitualConfig.BASE_RADIUS.get();
-        SourceCost = MeteoriteRitualConfig.SOURCE_COST_PER_BLOCK.get();
         ConsumeItem = ForgeRegistries.ITEMS.getValue(
                 new ResourceLocation(MeteoriteRitualConfig.RADIUS_INCREASE_ITEM.get()));
 
-        currentMeteoriteType = RecipeRegistry.getTypeById("default");
+        currentMeteoriteType = RecipeRegistry.getTypeByInput(Items.AIR);
 
         for (ItemStack stack : getConsumedItems()) {
             if (stack.is(ConsumeItem)) {
@@ -67,7 +67,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
         if (world != null && world.getGameTime() % 2 == 0 && !world.isClientSide) {
 
-            int high = TargetRadius * 2;
+            int high = TargetRadius << 1;
 
             center = Objects.requireNonNull(getPos()).above(high);
 
@@ -91,7 +91,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
             CurrentRadius++;
 
-            int sourceCost = Math.max(1, blocksGenerated * SourceCost);
+            int sourceCost = Math.max(1, (int) (blocksGenerated * SourceCost));
             if (consumeSource(world, center, sourceCost)) {
                 world.playSound(null, getPos(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 1.0f);
                 setFinished();
