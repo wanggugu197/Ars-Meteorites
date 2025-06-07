@@ -1,7 +1,6 @@
 package com.arsmeteorites.arsmeteorites.jei;
 
 import com.arsmeteorites.arsmeteorites.ArsMeteorites;
-import com.arsmeteorites.arsmeteorites.MeteoriteRitualConfig;
 import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
 
 import net.minecraft.client.Minecraft;
@@ -9,7 +8,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -33,9 +31,6 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
     private final IDrawable icon;
     private final Component title;
     private final Font font;
-
-    private final Item ConsumeItem = ForgeRegistries.ITEMS.getValue(
-            new ResourceLocation(MeteoriteRitualConfig.RADIUS_INCREASE_ITEM.get()));
 
     public MeteoritesRecipeCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.createBlankDrawable(150, 145);
@@ -124,12 +119,10 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
 
         if (recipe.input() != null) {
             builder.addSlot(RecipeIngredientRole.INPUT, 2, backgroundHeight - 50)
-                    .addItemStack(new ItemStack(recipe.input()));
+                    .addItemStack(new ItemStack(recipe.input())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.input")));
         }
 
-        if (ConsumeItem != null) {
-            builder.addSlot(RecipeIngredientRole.CATALYST, 18, backgroundHeight - 34)
-                    .addItemStack(new ItemStack(ConsumeItem)).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.source_gem")));
-        }
+        builder.addSlot(RecipeIngredientRole.CATALYST, 18, backgroundHeight - 34)
+                .addItemStack(new ItemStack(recipe.catalysts())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.source_gem")));
     }
 }

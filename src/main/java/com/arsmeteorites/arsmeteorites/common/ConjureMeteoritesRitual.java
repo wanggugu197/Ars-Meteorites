@@ -15,22 +15,23 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import com.hollingsworth.arsnouveau.api.ritual.AbstractRitual;
 import com.hollingsworth.arsnouveau.api.util.SourceUtil;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
+import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.util.*;
 
 public class ConjureMeteoritesRitual extends AbstractRitual {
 
-    private int TargetRadius = 7;
-    private double SourceCost = 5;
-    private Item ConsumeItem = ForgeRegistries.ITEMS.getValue(
-            new ResourceLocation("ars_nouveau:source_gem"));
+    private int TargetRadius;
+    private double SourceCost;
     private RecipeRegistry.MeteoriteType currentMeteoriteType;
+    private final Object2IntMap<Item> map = new Object2IntOpenHashMap<>();
 
     private int CurrentRadius = 0;
     private BlockPos center;
@@ -42,21 +43,33 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         Level world = getWorld();
         if (world != null && world.isClientSide) return;
 
-        TargetRadius = MeteoriteRitualConfig.BASE_RADIUS.get();
-        ConsumeItem = ForgeRegistries.ITEMS.getValue(
-                new ResourceLocation(MeteoriteRitualConfig.RADIUS_INCREASE_ITEM.get()));
+        int minRadius = MeteoriteRitualConfig.BASE_RADIUS.get();
+        int maxRadius = MeteoriteRitualConfig.MAX_RADIUS.get();
 
+        Item consumeItem = ItemsRegistry.SOURCE_GEM.get().asItem();
+        Item MeteoriteItem = Items.AIR;
         currentMeteoriteType = RecipeRegistry.getTypeByInput(Items.AIR);
 
         for (ItemStack stack : getConsumedItems()) {
-            if (stack.is(ConsumeItem)) {
-                TargetRadius = Math.min(TargetRadius + stack.getCount(), MeteoriteRitualConfig.MAX_RADIUS.get());
+            Item consumable = stack.getItem();
+
+            if (map.containsKey(consumable)) {
+                map.put(consumable, map.getInt(consumable) + 1);
             } else {
-                RecipeRegistry.MeteoriteType type = RecipeRegistry.getTypeByInput(stack.getItem());
-                if (type != null) {
-                    currentMeteoriteType = type;
-                    SourceCost = type.source();
-                }
+                map.put(consumable, 1);
+            }
+
+            RecipeRegistry.MeteoriteType type = RecipeRegistry.getTypeByInput(consumable);
+
+            if (type != null && MeteoriteItem == Items.AIR) {
+                MeteoriteItem = consumable;
+                SourceCost = type.source();
+                consumeItem = type.catalysts();
+                currentMeteoriteType = type;
+            }
+
+            if (stack.is(consumeItem)) {
+                TargetRadius = Math.min(minRadius + map.getInt(consumable), maxRadius);
             }
         }
     }
@@ -82,7 +95,8 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             }
 
             if (CurrentRadius >= TargetRadius) {
-                world.playSound(null, getPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0f, 0.5f);
+                world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 2.0f, 0.5f);
+                world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 4.0f, 0.8f);
                 setFinished();
                 return;
             }
@@ -93,14 +107,15 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
             int sourceCost = Math.max(1, (int) (blocksGenerated * SourceCost));
             if (consumeSource(world, center, sourceCost)) {
-                world.playSound(null, getPos(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 1.0f);
+                world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 4.0f, 0.8f);
                 setFinished();
                 return;
             }
         }
 
         if (world != null) {
-            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 1.0f, 0.8f);
+            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 2.0f, 0.5f);
+            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 4.0f, 0.8f);
         }
     }
 
@@ -207,10 +222,8 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
     @Override
     public boolean canConsumeItem(ItemStack stack) {
-        if (stack.is(ConsumeItem)) {
-            return true;
-        }
-        return RecipeRegistry.getTypeByInput(stack.getItem()) != null;
+        Item item = stack.getItem();
+        return RecipeRegistry.isItemCanConsume(item);
     }
 
     @Override

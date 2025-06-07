@@ -1,7 +1,6 @@
 package com.arsmeteorites.arsmeteorites.emi;
 
 import com.arsmeteorites.arsmeteorites.ArsMeteorites;
-import com.arsmeteorites.arsmeteorites.MeteoriteRitualConfig;
 import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
 
 import net.minecraft.network.chat.Component;
@@ -27,16 +26,13 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
     private final RecipeRegistry.MeteoriteType recipe;
     private final ResourceLocation id;
 
-    private final Item Catalysts = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(
+    private final Item Ritual = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(
             new ResourceLocation(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites")));
 
     public MeteoritesEmiRecipe(RecipeRegistry.MeteoriteType recipe) {
         this.recipe = recipe;
         this.id = new ResourceLocation(ArsMeteorites.MOD_ID, "/" + recipe.id().toLowerCase());
     }
-
-    private final Item ConsumeItem = ForgeRegistries.ITEMS.getValue(
-            new ResourceLocation(MeteoriteRitualConfig.RADIUS_INCREASE_ITEM.get()));
 
     @Override
     public EmiRecipeCategory getCategory() {
@@ -57,7 +53,7 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
 
     @Override
     public List<EmiIngredient> getCatalysts() {
-        return List.of(EmiStack.of(Catalysts));
+        return List.of(EmiStack.of(Ritual), EmiStack.of(recipe.catalysts()));
     }
 
     @Override
@@ -123,16 +119,14 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
 
         widgets.addSlot(EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()), 2, backgroundHeight - 18).drawBack(false);
 
-        widgets.addSlot(EmiStack.of(Catalysts), 2, backgroundHeight - 34).drawBack(false);
+        widgets.addSlot(EmiStack.of(Ritual), 2, backgroundHeight - 34).drawBack(false);
 
         if (recipe.input() != null) {
-            widgets.addSlot(EmiStack.of(recipe.input()), 2, backgroundHeight - 50).drawBack(false);
+            widgets.addSlot(EmiStack.of(recipe.input()), 2, backgroundHeight - 50).appendTooltip(Component.translatable("tooltip.arsmeteorites.input")).drawBack(false);
         }
 
-        if (ConsumeItem != null) {
-            widgets.addSlot(EmiStack.of(ConsumeItem), 18, backgroundHeight - 34)
-                    .appendTooltip(Component.translatable("tooltip.arsmeteorites.source_gem")).recipeContext(this).drawBack(false);
-        }
+        widgets.addSlot(EmiStack.of(recipe.catalysts()), 18, backgroundHeight - 34)
+                .appendTooltip(Component.translatable("tooltip.arsmeteorites.source_gem")).recipeContext(this).drawBack(false);
 
         widgets.addText(
                 Component.translatable("jei.arsmeteorites.source_cost", recipe.source()),
