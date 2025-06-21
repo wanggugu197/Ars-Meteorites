@@ -39,7 +39,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
     private boolean isSafeToGenerate = false;
     private boolean isSourceCosted = true;
 
-    int[] Number_of_blocks = { 1, 6, 26, 90, 134, 258, 410, 494, 690, 962,
+    private final int[] Number_of_blocks = { 1, 6, 26, 90, 134, 258, 410, 494, 690, 962,
             1098, 1406, 1578, 2018, 2342, 2634, 2930, 3402, 3926, 4266,
             4730, 5510, 5562, 6410, 6894, 7490, 8258, 8994, 9446, 9978,
             11138, 11406, 12578, 13490, 13962, 15062, 15690, 16826, 17454, 18890,
@@ -116,8 +116,8 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             }
 
             if (isSourceCosted) {
-                int blocksGenerated = generateMeteoriteLayer(world, CurrentRadius);
-                sourceCostNeeded = Math.max(1, (int) (blocksGenerated * SourceCost));
+                generateMeteoriteLayer(world, CurrentRadius);
+                sourceCostNeeded = Math.max(1, (int) (Number_of_blocks[CurrentRadius + 1] * SourceCost));
                 CurrentRadius++;
             }
 
@@ -130,13 +130,12 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         }
     }
 
-    private int generateMeteoriteLayer(Level world, int radius) {
+    private void generateMeteoriteLayer(Level world, int radius) {
         if (radius == 0) {
             world.setBlock(center, getRandomMeteoriteBlock(), 3);
-            return 1;
+            return;
         }
 
-        int blocksGenerated = 0;
         int radiusSq = radius * radius;
         int innerRadiusSq = (radius - 1) * (radius - 1);
 
@@ -155,12 +154,10 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
                     int distanceSq = xySq + z * z;
                     if (distanceSq <= radiusSq && distanceSq > innerRadiusSq) {
                         world.setBlock(center.offset(x, y, z), getRandomMeteoriteBlock(), 3);
-                        blocksGenerated++;
                     }
                 }
             }
         }
-        return blocksGenerated;
     }
 
     private BlockState getRandomMeteoriteBlock() {
@@ -235,11 +232,6 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
     public boolean canConsumeItem(ItemStack stack) {
         Item item = stack.getItem();
         return RecipeRegistry.isItemCanConsume(item);
-    }
-
-    @Override
-    public int getSourceCost() {
-        return 1;
     }
 
     @Override
