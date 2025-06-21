@@ -34,8 +34,26 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
     private final Object2IntMap<Item> map = new Object2IntOpenHashMap<>();
 
     private int CurrentRadius = 0;
+    private int sourceCostNeeded = 0;
     private BlockPos center;
     private boolean isSafeToGenerate = false;
+    private boolean isSourceCosted = true;
+
+    int[] Number_of_blocks = { 1, 6, 26, 90, 134, 258, 410, 494, 690, 962,
+            1098, 1406, 1578, 2018, 2342, 2634, 2930, 3402, 3926, 4266,
+            4730, 5510, 5562, 6410, 6894, 7490, 8258, 8994, 9446, 9978,
+            11138, 11406, 12578, 13490, 13962, 15062, 15690, 16826, 17454, 18890,
+            19322, 20598, 21818, 22602, 23858, 25278, 25682, 26954, 28230, 29786,
+            30738, 32186, 33326, 34626, 36314, 36750, 38810, 40458, 40802, 43502,
+            44010, 46586, 47166, 49490, 50586, 51734, 54818, 54834, 57122, 59838,
+            60122, 62370, 63710, 66290, 68682, 69626, 71598, 73658, 75122, 77334,
+            78866, 82026, 82910, 86514, 87122, 89498, 92214, 94418, 95682, 97622,
+            101970, 102986, 104426, 108414, 109130, 112290, 114230, 116762, 119874, 122834,
+            123294, 126914, 130170, 131534, 134570, 138282, 138854, 142530, 145706, 146970,
+            151334, 152762, 156450, 159206, 162210, 165002, 167322, 171398, 172898, 176130,
+            178478, 183402, 185186, 189038, 191634, 195050, 199170, 198422, 204306, 208298,
+            210542, 214146, 216986, 221898, 224390, 226362, 229658, 235286, 237090, 241346,
+            243294, 250082, 250002, 255290, 258878, 262170, 267410, 269886, 272522, 277586 };
 
     @Override
     public void onStart(@Nullable Player player) {
@@ -80,12 +98,10 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
         if (world != null && world.getGameTime() % 2 == 0 && !world.isClientSide) {
 
-            int high = TargetRadius << 1;
-
-            center = Objects.requireNonNull(getPos()).above(high);
+            center = Objects.requireNonNull(getPos()).above(TargetRadius << 1);
 
             if (!isSafeToGenerate) {
-                if (hasNonAirBlocks(world, center, high)) {
+                if (hasNonAirBlocks(world, center, TargetRadius << 1)) {
                     SphereExplosion.explosion(center, world, TargetRadius * 3, false, false);
                     setFinished();
                 } else {
@@ -95,27 +111,22 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             }
 
             if (CurrentRadius >= TargetRadius) {
-                world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 2.0f, 0.5f);
-                world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 4.0f, 0.8f);
                 setFinished();
                 return;
             }
 
-            int blocksGenerated = generateMeteoriteLayer(world, CurrentRadius);
-
-            CurrentRadius++;
-
-            int sourceCost = Math.max(1, (int) (blocksGenerated * SourceCost));
-            if (consumeSource(world, center, sourceCost)) {
-                world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 4.0f, 0.8f);
-                setFinished();
-                return;
+            if (isSourceCosted) {
+                int blocksGenerated = generateMeteoriteLayer(world, CurrentRadius);
+                sourceCostNeeded = Math.max(1, (int) (blocksGenerated * SourceCost));
+                CurrentRadius++;
             }
+
+            consumeSource(world, getPos());
         }
 
         if (world != null) {
-            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 2.0f, 0.5f);
-            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 4.0f, 0.8f);
+            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 2.0f, 1.0f);
+            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 8.0f, 0.5f);
         }
     }
 
@@ -206,18 +217,18 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         return false;
     }
 
-    private boolean consumeSource(Level world, BlockPos center, int amount) {
+    private void consumeSource(Level world, BlockPos center) {
         setNeedsSource(true);
-        int remaining = amount;
-        while (remaining > 0) {
-            int amountToTake = Math.min(remaining, 5000);
+        while (sourceCostNeeded > 0) {
+            int amountToTake = Math.min(sourceCostNeeded, 5000);
             if (SourceUtil.takeSource(center, world, 6, amountToTake) == null) {
-                return false;
+                isSourceCosted = false;
+                return;
             }
-            remaining -= amountToTake;
+            sourceCostNeeded -= amountToTake;
         }
         setNeedsSource(false);
-        return true;
+        isSourceCosted = true;
     }
 
     @Override
