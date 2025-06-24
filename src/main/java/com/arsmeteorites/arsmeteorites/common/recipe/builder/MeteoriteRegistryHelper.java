@@ -41,6 +41,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
                 registerMeteoriteType(
                         recipe.inputItemId(),
                         recipe.source(),
+                        recipe.model(),
                         recipe.catalysts(),
                         recipe.meteoriteBlockIds(),
                         recipe.weights());
@@ -52,10 +53,10 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
         ArsMeteorites.LOGGER.info("已加载 {} 个陨石配方", entries.size());
     }
 
-    public static void registerMeteoriteType(String inputItemId, double source, String catalyst, String[] blockIds, int[] weights) {
+    public static void registerMeteoriteType(String inputItemId, double source, int model, String catalyst, String[] blockIds, int[] weights) {
         String normalizedId = generateNormalizedId(inputItemId);
 
-        Item input = ForgeRegistries.ITEMS.getValue(new ResourceLocation(inputItemId));
+        Item input = ArsMeteorites.getItem(inputItemId);
         if (input == null) {
             ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 物品 {} 不存在", normalizedId, inputItemId);
             return;
@@ -63,29 +64,29 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
         Block[] blocks = new Block[blockIds.length];
         for (int i = 0; i < blockIds.length; i++) {
-            blocks[i] = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockIds[i]));
-            if (blocks[i] == Blocks.AIR) {
+            blocks[i] = ArsMeteorites.getBlock(blockIds[i]);
+            if (blocks[i] == Blocks.BARRIER) {
                 ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 方块 {} 不存在", normalizedId, blockIds[i]);
                 return;
             }
         }
 
-        Item catalysts = ForgeRegistries.ITEMS.getValue(new ResourceLocation(catalyst));
+        Item catalysts = ArsMeteorites.getItem(catalyst);
         if (catalysts == null) {
             ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 催化剂 {} 不存在", normalizedId, catalyst);
             return;
         }
 
-        registerMeteoriteType(normalizedId, input, source, catalysts, blocks, weights);
+        registerMeteoriteType(normalizedId, input, source, model, catalysts, blocks, weights);
     }
 
-    public static void registerMeteoriteType(Item input, double source, Block[] meteorites, int[] weights) {
+    public static void registerMeteoriteType(Item input, double source, int model, Block[] meteorites, int[] weights) {
         Item catalysts = ItemsRegistry.SOURCE_GEM.get().asItem();
         String normalizedId = generateNormalizedId(input);
-        registerMeteoriteType(normalizedId, input, source, catalysts, meteorites, weights);
+        registerMeteoriteType(normalizedId, input, source, model, catalysts, meteorites, weights);
     }
 
-    public static void registerMeteoriteType(String id, Item input, double source, Item catalysts, Block[] meteorites, int[] weights) {
+    public static void registerMeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights) {
         if (weights.length != meteorites.length) {
             ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 权重数组长度不匹配", id);
             return;
@@ -96,7 +97,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
         try {
             RecipeRegistry.registerMeteoriteType(
-                    new RecipeRegistry.MeteoriteType(id, input, source, catalysts, meteorites, weights, totalWeight));
+                    new RecipeRegistry.MeteoriteType(id, input, source, model, catalysts, meteorites, weights, totalWeight));
         } catch (IllegalStateException e) {
             ArsMeteorites.LOGGER.error("注册陨石类型失败: {}", id);
         }

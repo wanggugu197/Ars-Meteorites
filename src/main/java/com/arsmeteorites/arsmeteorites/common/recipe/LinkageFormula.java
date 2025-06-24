@@ -9,7 +9,7 @@ public class LinkageFormula {
     public static void LinkageFormulaRegistration() {
         MeteoriteRegistryHelper.registerMeteoriteType(
                 "ars_nouveau:archwood_planks",
-                50,
+                50, 0,
                 "ars_nouveau:sourcestone",
                 new String[] {
                         "ars_nouveau:archwood_planks",
@@ -42,7 +42,7 @@ public class LinkageFormula {
 
         MeteoriteRegistryHelper.registerMeteoriteType(
                 "ars_nouveau:sourcestone",
-                200,
+                200, 0,
                 "ars_nouveau:source_gem",
                 new String[] {
                         "ars_nouveau:sourcestone",
@@ -76,7 +76,7 @@ public class LinkageFormula {
         if (isModLoaded("botania")) {
             MeteoriteRegistryHelper.registerMeteoriteType(
                     "botania:fertilizer",
-                    50,
+                    50, 0,
                     "ars_nouveau:source_gem",
                     new String[] {
                             "botania:white_petal_block",
@@ -103,7 +103,7 @@ public class LinkageFormula {
 
             MeteoriteRegistryHelper.registerMeteoriteType(
                     "botania:life_essence",
-                    250,
+                    250, 0,
                     "botania:livingrock",
                     new String[] {
                             "botania:livingrock",

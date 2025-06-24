@@ -6,9 +6,8 @@ import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import dev.emi.emi.api.recipe.EmiRecipe;
@@ -19,15 +18,13 @@ import dev.emi.emi.api.widget.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class MeteoritesEmiRecipe implements EmiRecipe {
 
     private final RecipeRegistry.MeteoriteType recipe;
     private final ResourceLocation id;
 
-    private final Item Ritual = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(
-            new ResourceLocation(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites")));
+    private final Item Ritual = ArsMeteorites.getItem(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites");
 
     public MeteoritesEmiRecipe(RecipeRegistry.MeteoriteType recipe) {
         this.recipe = recipe;
@@ -48,7 +45,7 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
     public List<EmiIngredient> getInputs() {
         return recipe.input() != null ?
                 List.of(EmiStack.of(recipe.input())) :
-                List.of(EmiStack.of(Blocks.AIR));
+                List.of(EmiStack.of(Items.AIR));
     }
 
     @Override
@@ -117,7 +114,7 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
             currentCircle++;
         }
 
-        widgets.addSlot(EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()), 2, backgroundHeight - 18).drawBack(false);
+        widgets.addSlot(EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()), 2, backgroundHeight - 18).appendTooltip(Component.translatable("tooltip.arsmeteorites.explode")).drawBack(false);
 
         widgets.addSlot(EmiStack.of(Ritual), 2, backgroundHeight - 34).drawBack(false);
 
@@ -131,5 +128,10 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
         widgets.addText(
                 Component.translatable("jei.arsmeteorites.source_cost", recipe.source()),
                 20, backgroundHeight - 12, 0xFFFFFF, false);
+
+        // 正确添加缩放纹理 (Forge 1.20.1 规范方式)
+        ResourceLocation texture = new ResourceLocation(ArsMeteorites.MOD_ID, "textures/gui/direction.png");
+        widgets.addTexture(texture, 2, 2, 16, 16, 0, 0, 48, 48, 48, 48)
+                .tooltipText(List.of(Component.translatable("tooltip.arsmeteorites.direction")));
     }
 }

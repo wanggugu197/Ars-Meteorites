@@ -14,12 +14,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.hollingsworth.arsnouveau.api.ritual.AbstractRitual;
 import com.hollingsworth.arsnouveau.api.util.SourceUtil;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
-import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
+import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +31,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
     private int TargetRadius;
     private double SourceCost;
+    private int model;
     private RecipeRegistry.MeteoriteType currentMeteoriteType;
     private final Object2IntMap<Item> map = new Object2IntOpenHashMap<>();
 
@@ -64,32 +66,36 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         int minRadius = MeteoriteRitualConfig.BASE_RADIUS.get();
         int maxRadius = MeteoriteRitualConfig.MAX_RADIUS.get();
 
-        Item consumeItem = ItemsRegistry.SOURCE_GEM.get().asItem();
         Item MeteoriteItem = Items.AIR;
         currentMeteoriteType = RecipeRegistry.getTypeByInput(Items.AIR);
+
+        int XOffset = 0;
+        int ZOffset = 0;
 
         for (ItemStack stack : getConsumedItems()) {
             Item consumable = stack.getItem();
 
-            if (map.containsKey(consumable)) {
-                map.put(consumable, map.getInt(consumable) + 1);
-            } else {
-                map.put(consumable, 1);
-            }
+            if (map.containsKey(consumable)) map.put(consumable, map.getInt(consumable) + 1);
+            else map.put(consumable, 1);
 
             RecipeRegistry.MeteoriteType type = RecipeRegistry.getTypeByInput(consumable);
 
             if (type != null && MeteoriteItem == Items.AIR) {
                 MeteoriteItem = consumable;
                 SourceCost = type.source();
-                consumeItem = type.catalysts();
+                model = type.model();
                 currentMeteoriteType = type;
             }
-
-            if (stack.is(consumeItem)) {
-                TargetRadius = Math.min(minRadius + map.getInt(consumable), maxRadius);
-            }
         }
+
+        TargetRadius = Math.min(minRadius + map.getInt(currentMeteoriteType.catalysts()), maxRadius);
+
+        XOffset += map.getInt(BlockRegistry.FROSTAYA_POD.get().asItem());
+        XOffset -= map.getInt(BlockRegistry.BOMBEGRANTE_POD.get().asItem());
+        ZOffset += map.getInt(BlockRegistry.MENDOSTEEN_POD.get().asItem());
+        ZOffset -= map.getInt(BlockRegistry.BASTION_POD.get().asItem());
+
+        getCenter(world, XOffset, ZOffset, TargetRadius);
     }
 
     @Override
@@ -98,22 +104,12 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
         if (world != null && world.getGameTime() % 2 == 0 && !world.isClientSide) {
 
-            center = Objects.requireNonNull(getPos()).above(TargetRadius << 1);
-
             if (!isSafeToGenerate) {
-                if (hasNonAirBlocks(world, center, TargetRadius << 1)) {
-                    SphereExplosion.explosion(center, world, TargetRadius * 3, false, false);
-                    setFinished();
-                } else {
-                    isSafeToGenerate = true;
-                    CurrentRadius = 0;
-                }
-            }
-
-            if (CurrentRadius >= TargetRadius) {
                 setFinished();
                 return;
             }
+
+            if (CurrentRadius >= TargetRadius) setFinished();
 
             if (isSourceCosted) {
                 generateMeteoriteLayer(world, CurrentRadius);
@@ -139,6 +135,23 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         int radiusSq = radius * radius;
         int innerRadiusSq = (radius - 1) * (radius - 1);
 
+        if (model == 0) {
+            iterateSphereBlocks(radius, radiusSq, innerRadiusSq, (pos) -> {
+                if (world.getBlockState(pos).isAir()) {
+                    world.setBlock(pos, getRandomMeteoriteBlock(), 3);
+                }
+            });
+        } else if (model == 1) {
+            BlockState MeteoriteBlock = getFixedBlockForLayer();
+            iterateSphereBlocks(radius, radiusSq, innerRadiusSq, (pos) -> {
+                if (world.getBlockState(pos).isAir()) {
+                    world.setBlock(pos, MeteoriteBlock, 3);
+                }
+            });
+        }
+    }
+
+    private void iterateSphereBlocks(int radius, int radiusSq, int innerRadiusSq, java.util.function.Consumer<BlockPos> blockAction) {
         for (int x = -radius; x <= radius; x++) {
             int xSq = x * x;
 
@@ -153,7 +166,8 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
                 for (int z = -radius; z <= radius; z++) {
                     int distanceSq = xySq + z * z;
                     if (distanceSq <= radiusSq && distanceSq > innerRadiusSq) {
-                        world.setBlock(center.offset(x, y, z), getRandomMeteoriteBlock(), 3);
+                        BlockPos pos = center.offset(x, y, z);
+                        blockAction.accept(pos);
                     }
                 }
             }
@@ -165,25 +179,58 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         Block[] blocks = currentMeteoriteType.meteorites();
         int[] weights = currentMeteoriteType.weights();
 
-        if (totalWeight <= 0 || blocks.length == 0) {
-            return blocks[0].defaultBlockState();
-        }
-
         int randomValue = rand.nextInt(totalWeight);
         int cumulativeWeight = 0;
 
         for (int i = 0; i < blocks.length; i++) {
             cumulativeWeight += weights[i];
-            if (randomValue < cumulativeWeight) {
-                return blocks[i].defaultBlockState();
-            }
+            if (randomValue < cumulativeWeight) return blocks[i].defaultBlockState();
         }
 
         return blocks[0].defaultBlockState();
     }
 
-    private boolean hasNonAirBlocks(Level world, BlockPos center, int high) {
-        int checkRadius = (int) (TargetRadius * 1.2f);
+    private BlockState getFixedBlockForLayer() {
+        int totalWeight = currentMeteoriteType.totalWeight();
+        Block[] blocks = currentMeteoriteType.meteorites();
+        int[] weights = currentMeteoriteType.weights();
+
+        int targetWeight = (totalWeight * CurrentRadius / TargetRadius);
+
+        int cumulativeWeight = 0;
+        for (int i = 0; i < blocks.length; i++) {
+            cumulativeWeight += weights[i];
+            if (targetWeight < cumulativeWeight) return blocks[i].defaultBlockState();
+        }
+
+        return blocks[blocks.length - 1].defaultBlockState();
+    }
+
+    private void getCenter(Level world, int XOffset, int ZOffset, int radius) {
+        center = Objects.requireNonNull(getPos()).offset(XOffset, radius << 1, ZOffset);
+        System.out.println("METEORITR_WAY 配置值: " + MeteoriteRitualConfig.METEORITR_WAY.get());
+
+        if (MeteoriteRitualConfig.METEORITR_WAY.get()) {
+            if (hasNonAirBlocks(world, center, radius << 1, radius)) {
+                SphereExplosion.explosion(center, world, radius * 3);
+                isSafeToGenerate = false;
+            } else {
+                isSafeToGenerate = true;
+                CurrentRadius = 0;
+            }
+        } else {
+            int destructionValue = (radius * radius * radius / 5);
+            if (DestroyBlockJudgmentCenter(world, destructionValue, radius)) {
+                isSafeToGenerate = false;
+            } else {
+                isSafeToGenerate = true;
+                CurrentRadius = 0;
+            }
+        }
+    }
+
+    private boolean hasNonAirBlocks(Level world, BlockPos center, int high, int radius) {
+        int checkRadius = (int) (radius * 1.2f);
         int checkRadiusSq = checkRadius * checkRadius;
 
         for (int y = -high + 1; y <= 0; y++) {
@@ -212,6 +259,57 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             }
         }
         return false;
+    }
+
+    private boolean DestroyBlockJudgmentCenter(Level world, int destructionValue, int radius) {
+        final int maxY = world.getMaxBuildHeight();
+        final int minY = world.getMinBuildHeight();
+        int destruction = destructionValue;
+
+        for (int y = maxY; y >= minY; y--) {
+            center = center.atY(y);
+            float hardnessSum = 0.0f;
+
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    BlockPos pos = center.offset(dx, 0, dz);
+                    BlockState state = world.getBlockState(pos);
+
+                    if (state.getBlock() == Blocks.BEDROCK) destruction = -1;
+
+                    if (!state.isAir()) {
+                        float hardness = state.getDestroySpeed(world, pos);
+                        if (hardness >= 0) hardnessSum += hardness;
+                    }
+                }
+            }
+
+            destruction -= (int) hardnessSum;
+
+            if (destruction > 0) {
+                int innerRad = (int) (radius * 0.5f);
+                int outerRad = (int) (radius * 0.7f);
+                int innerRadSq = (innerRad * innerRad);
+                int outerRadSq = (outerRad * outerRad);
+
+                for (int dx = -(int) outerRad; dx <= outerRad; dx++) {
+                    for (int dz = -(int) outerRad; dz <= outerRad; dz++) {
+                        int distSq = dx * dx + dz * dz;
+                        BlockPos pos = center.offset(dx, 0, dz);
+
+                        if (distSq <= innerRadSq) world.destroyBlock(pos, false);
+                        else if (distSq <= outerRadSq)
+                            if (world.random.nextInt(100) < 70) world.destroyBlock(pos, false);
+                    }
+                }
+            }
+
+            if (destruction <= 0) {
+                center = center.atY(y + (int) (radius * 0.8f));
+                return false;
+            }
+        }
+        return true;
     }
 
     private void consumeSource(Level world, BlockPos center) {

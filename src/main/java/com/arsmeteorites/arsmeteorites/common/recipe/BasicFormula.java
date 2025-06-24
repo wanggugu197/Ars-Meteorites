@@ -10,7 +10,7 @@ public class BasicFormula {
 
     public static void BasicFormulaRegistration() {
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.AIR, 1,
+                Items.AIR, 1, 0,
                 new Block[] {
                         Blocks.STONE, Blocks.DEEPSLATE, Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE,
                         Blocks.TUFF, Blocks.COBBLESTONE, Blocks.BLACKSTONE, Blocks.BASALT, Blocks.CALCITE,
@@ -21,7 +21,7 @@ public class BasicFormula {
                         20, 5, 1 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.PRISMARINE_SHARD, 5,
+                Items.PRISMARINE_SHARD, 5, 0,
                 new Block[] {
                         Blocks.PRISMARINE, Blocks.PRISMARINE_BRICKS, Blocks.DARK_PRISMARINE,
                         Blocks.SEA_LANTERN, Blocks.SEA_PICKLE, Blocks.BUBBLE_CORAL_BLOCK,
@@ -36,7 +36,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.SAND, 5,
+                Items.SAND, 5, 0,
                 new Block[] {
                         Blocks.SANDSTONE, Blocks.CUT_SANDSTONE, Blocks.SMOOTH_SANDSTONE, Blocks.CHISELED_SANDSTONE,
                         Blocks.TERRACOTTA, Blocks.YELLOW_TERRACOTTA, Blocks.RED_TERRACOTTA, Blocks.WHITE_TERRACOTTA,
@@ -51,7 +51,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.ICE, 5,
+                Items.ICE, 5, 0,
                 new Block[] {
                         Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE,
                         Blocks.SNOW_BLOCK, Blocks.POWDER_SNOW, Blocks.SNOW,
@@ -66,7 +66,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.NETHER_BRICK, 10,
+                Items.NETHER_BRICK, 10, 0,
                 new Block[] {
                         Blocks.NETHERRACK, Blocks.BLACKSTONE, Blocks.BASALT, Blocks.MAGMA_BLOCK,
                         Blocks.SOUL_SAND, Blocks.SOUL_SOIL, Blocks.GLOWSTONE, Blocks.SHROOMLIGHT,
@@ -81,7 +81,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.ENDER_PEARL, 25,
+                Items.ENDER_PEARL, 25, 0,
                 new Block[] {
                         Blocks.END_STONE, Blocks.END_STONE_BRICKS, Blocks.PURPUR_BLOCK, Blocks.PURPUR_PILLAR,
                         Blocks.CHORUS_PLANT, Blocks.CHORUS_FLOWER,
@@ -96,7 +96,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.GLOW_BERRIES, 5,
+                Items.GLOW_BERRIES, 5, 0,
                 new Block[] {
                         Blocks.MOSS_BLOCK, Blocks.MOSS_CARPET, Blocks.AZALEA, Blocks.FLOWERING_AZALEA,
                         Blocks.GLOW_LICHEN, Blocks.SPORE_BLOSSOM, Blocks.HANGING_ROOTS,
@@ -111,7 +111,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.RED_DYE, 2,
+                Items.RED_DYE, 2, 0,
                 new Block[] {
                         Blocks.RED_TERRACOTTA, Blocks.ORANGE_TERRACOTTA, Blocks.YELLOW_TERRACOTTA,
                         Blocks.WHITE_TERRACOTTA, Blocks.BROWN_TERRACOTTA,
@@ -127,7 +127,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.COAL, 20,
+                Items.COAL, 20, 0,
                 new Block[] {
                         Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE, Blocks.COAL_BLOCK,
                         Blocks.STONE, Blocks.DEEPSLATE, Blocks.TUFF,
@@ -142,7 +142,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.IRON_INGOT, 25,
+                Items.IRON_INGOT, 25, 0,
                 new Block[] {
                         Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.RAW_IRON_BLOCK,
                         Blocks.IRON_BLOCK,
@@ -158,7 +158,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.COPPER_INGOT, 20,
+                Items.COPPER_INGOT, 20, 0,
                 new Block[] {
                         Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE,
                         Blocks.RAW_COPPER_BLOCK, Blocks.OXIDIZED_COPPER,
@@ -174,7 +174,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.GOLD_INGOT, 30,
+                Items.GOLD_INGOT, 30, 0,
                 new Block[] {
                         Blocks.GOLD_ORE, Blocks.DEEPSLATE_GOLD_ORE,
                         Blocks.RAW_GOLD_BLOCK, Blocks.GILDED_BLACKSTONE,
@@ -190,7 +190,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.DIAMOND, 50,
+                Items.DIAMOND, 50, 0,
                 new Block[] {
                         Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
                         Blocks.DIAMOND_BLOCK,
@@ -204,7 +204,7 @@ public class BasicFormula {
                 });
 
         MeteoriteRegistryHelper.registerMeteoriteType(
-                Items.NETHERITE_SCRAP, 200,
+                Items.NETHERITE_SCRAP, 200, 0,
                 new Block[] {
                         Blocks.ANCIENT_DEBRIS, Blocks.NETHERITE_BLOCK,
                         Blocks.BASALT, Blocks.BLACKSTONE,
@@ -216,6 +216,23 @@ public class BasicFormula {
                         30, 25,
                         15, 10,
                         3, 2
+                });
+
+        MeteoriteRegistryHelper.registerMeteoriteType(
+                Items.NETHER_STAR, 50, 1,
+                new Block[] {
+                        Blocks.NETHERITE_BLOCK, Blocks.EMERALD_BLOCK,
+                        Blocks.DIAMOND_BLOCK, Blocks.GOLD_BLOCK,
+                        Blocks.QUARTZ_BLOCK, Blocks.LAPIS_BLOCK,
+                        Blocks.REDSTONE_BLOCK, Blocks.IRON_BLOCK,
+                        Blocks.COAL_BLOCK
+                },
+                new int[] {
+                        5,5,
+                        5,5,
+                        5,5,
+                        5,5,
+                        5
                 });
     }
 }

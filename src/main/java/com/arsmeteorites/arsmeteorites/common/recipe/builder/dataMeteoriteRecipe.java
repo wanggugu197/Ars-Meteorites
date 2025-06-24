@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 public record dataMeteoriteRecipe(
                                   String inputItemId,
                                   double source,
+                                  int model,
                                   String catalysts,
                                   String[] meteoriteBlockIds,
                                   int[] weights) {
@@ -15,6 +16,9 @@ public record dataMeteoriteRecipe(
     public static dataMeteoriteRecipe fromJson(JsonObject json) {
         String inputItemId = GsonHelper.getAsString(json, "input");
         double source = GsonHelper.getAsInt(json, "source");
+
+        int model = GsonHelper.getAsInt(json, "model", 0);
+
         String catalysts = GsonHelper.getAsString(json, "catalysts");
 
         JsonArray meteoritesArray = GsonHelper.getAsJsonArray(json, "meteorites");
@@ -28,6 +32,6 @@ public record dataMeteoriteRecipe(
             weights[i] = weightsArray.get(i).getAsInt();
         }
 
-        return new dataMeteoriteRecipe(inputItemId, source, catalysts, blockIds, weights);
+        return new dataMeteoriteRecipe(inputItemId, source, model, catalysts, blockIds, weights);
     }
 }

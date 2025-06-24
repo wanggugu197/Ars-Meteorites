@@ -1,10 +1,12 @@
 {
   "item.arsmeteorites.ritual_conjure_meteorites": "陨星",
-  "arsmeteorites.ritual_desc.ritual_conjure_meteorites": "从世界夹层中召唤一个巨大的陨石。\n仪式前请保持上空空旷，否则会发生剧烈爆炸。\n请先消耗物品选择陨石然后再消耗物品扩大陨石半径。\n根据方块生成数量消耗魔源。",
+  "arsmeteorites.ritual_desc.ritual_conjure_meteorites": "从世界夹层中召唤一个巨大的陨石。\n请先消耗物品选择陨石然后再消耗物品扩大陨石半径。\n根据方块生成数量消耗魔源。",
   "jei.category.arsmeteorites.meteorites": "召唤陨石",
   "jei.arsmeteorites.source_cost": "%s 魔源每块",
   "emi.category.arsmeteorites.meteorites": "召唤陨石",
   "tooltip.arsmeteorites.probability": "权重：%s",
+  "tooltip.arsmeteorites.explode": "小心爆炸",
   "tooltip.arsmeteorites.source_gem": "可用于提升陨石半径",
-  "tooltip.arsmeteorites.input": "可用于选择陨石"
+  "tooltip.arsmeteorites.input": "可用于选择陨石",
+  "tooltip.arsmeteorites.direction": "可用于调整陨石中心位置"
 }

@@ -1,7 +1,6 @@
 package com.arsmeteorites.arsmeteorites.common.explode;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -20,23 +19,18 @@ public final class SphereExplosion {
     private final BlockPos center;
     private final Level level;
     private final int radius;
-    private final boolean breakBedrock;
 
-    private SphereExplosion(BlockPos center, Level level, int radius, boolean breakBedrock, boolean spawnParticles) {
+    private SphereExplosion(BlockPos center, Level level, int radius) {
         this.center = center;
         this.level = level;
         this.radius = radius;
         int x = center.getX();
         int y = center.getY();
         int z = center.getZ();
-        this.breakBedrock = breakBedrock;
+
         if (this.level.isClientSide) {
             float soundPitch = (1.0f + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2f) * 0.7f;
             this.level.playLocalSound(x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0f, soundPitch, false);
-        }
-
-        if (spawnParticles) {
-            this.level.addParticle(ParticleTypes.EXPLOSION_EMITTER, x, y, z, 1.0, 0.0, 0.0);
         }
 
         this.level.gameEvent(null, GameEvent.EXPLODE, new Vec3(x, y, z));
@@ -93,14 +87,14 @@ public final class SphereExplosion {
                     if (distanceSquared < surfaceLayerStartSquared || distanceSquared > surfaceLayerEndSquared) continue;
                     BlockPos pos = center.offset(x, y, z);
                     BlockState state = level.getBlockState(pos);
-                    if (state.isAir() || (!breakBedrock && state.getBlock() == Blocks.BEDROCK)) continue;
+                    if (state.isAir() || (state.getBlock() == Blocks.BEDROCK)) continue;
                     level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
                 }
             }
         }
     }
 
-    public static void explosion(BlockPos center, Level level, int radius, boolean breakBedrock, boolean spawnParticles) {
-        new SphereExplosion(center, level, radius, breakBedrock, spawnParticles);
+    public static void explosion(BlockPos center, Level level, int radius) {
+        new SphereExplosion(center, level, radius);
     }
 }

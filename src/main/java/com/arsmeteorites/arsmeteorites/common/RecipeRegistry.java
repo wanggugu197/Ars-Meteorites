@@ -10,6 +10,8 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
+
 import java.util.*;
 
 import javax.annotation.Nullable;
@@ -20,7 +22,7 @@ import static com.arsmeteorites.arsmeteorites.common.recipe.LinkageFormula.Linka
 @Mod.EventBusSubscriber(modid = ArsMeteorites.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RecipeRegistry {
 
-    public record MeteoriteType(String id, Item input, double source, Item catalysts, Block[] meteorites, int[] weights, int totalWeight) {}
+    public record MeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights, int totalWeight) {}
 
     private static final Map<Item, MeteoriteType> TYPE_BY_INPUT = new HashMap<>();
 
@@ -35,8 +37,11 @@ public class RecipeRegistry {
 
     public static boolean isItemCanConsume(Item targetItem) {
         return TYPE_BY_INPUT.containsKey(targetItem) ||
-                TYPE_BY_INPUT.values().stream()
-                        .anyMatch(type -> targetItem.equals(type.catalysts()));
+                TYPE_BY_INPUT.values().stream().anyMatch(type -> targetItem.equals(type.catalysts())) ||
+                targetItem == BlockRegistry.MENDOSTEEN_POD.get().asItem() ||
+                targetItem == BlockRegistry.BASTION_POD.get().asItem() ||
+                targetItem == BlockRegistry.FROSTAYA_POD.get().asItem() ||
+                targetItem == BlockRegistry.BOMBEGRANTE_POD.get().asItem();
     }
 
     public static void registerMeteoriteType(MeteoriteType type) {

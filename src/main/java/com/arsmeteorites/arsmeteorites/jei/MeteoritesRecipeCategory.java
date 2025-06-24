@@ -10,10 +10,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -22,8 +22,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.MeteoriteType> {
 
@@ -64,6 +62,20 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
     public void draw(RecipeRegistry.MeteoriteType recipe, @NotNull IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         Component costText = Component.translatable("jei.arsmeteorites.source_cost", recipe.source());
         guiGraphics.drawString(font, costText, 20, background.getHeight() - 12, 0xFFFFFF, false);
+
+        ResourceLocation bigTexture = new ResourceLocation(ArsMeteorites.MOD_ID, "textures/gui/direction.png");
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(2, 2, 0);
+        guiGraphics.pose().scale(0.33f, 0.33f, 1.0f);
+        guiGraphics.blit(bigTexture, 0, 0, 0, 0, 48, 48, 48, 48);
+        guiGraphics.pose().popPose();
+    }
+
+    @Override
+    public void getTooltip(@NotNull ITooltipBuilder tooltip, RecipeRegistry.@NotNull MeteoriteType recipe, @NotNull IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+        if (mouseX >= 2 && mouseX < 18 && mouseY >= 2 && mouseY < 18) {
+            tooltip.add(Component.translatable("tooltip.arsmeteorites.direction"));
+        }
     }
 
     @Override
@@ -111,11 +123,10 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
         }
 
         builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 2, backgroundHeight - 18)
-                .addItemStack(new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem()));
+                .addItemStack(new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.explode")));
 
         builder.addSlot(RecipeIngredientRole.CATALYST, 2, backgroundHeight - 34)
-                .addItemStack(new ItemStack(Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(
-                        new ResourceLocation(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites")))));
+                .addItemStack(new ItemStack(ArsMeteorites.getItem(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites")));
 
         if (recipe.input() != null) {
             builder.addSlot(RecipeIngredientRole.INPUT, 2, backgroundHeight - 50)
