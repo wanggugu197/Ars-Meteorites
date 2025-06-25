@@ -18,7 +18,9 @@ import com.google.gson.JsonObject;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
@@ -44,7 +46,8 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
                         recipe.model(),
                         recipe.catalysts(),
                         recipe.meteoriteBlockIds(),
-                        recipe.weights());
+                        recipe.weights(),
+                        recipe.layer());
             } catch (Exception e) {
                 ArsMeteorites.LOGGER.error("加载配方 {} 失败", recipeId);
             }
@@ -54,6 +57,15 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
     }
 
     public static void registerMeteoriteType(String inputItemId, double source, int model, String catalyst, String[] blockIds, int[] weights) {
+        if (model == 3 || model == 4) {
+            ArsMeteorites.LOGGER.error("无法注册陨石类型: 输入物品 {}, 陨石模型 {} 需要层信息", inputItemId, model);
+            return;
+        }
+        int[] layer = { 0 };
+        registerMeteoriteType(inputItemId, source, model, catalyst, blockIds, weights, layer);
+    }
+
+    public static void registerMeteoriteType(String inputItemId, double source, int model, String catalyst, String[] blockIds, int[] weights, int[] layer) {
         String normalizedId = generateNormalizedId(inputItemId);
 
         Item input = ArsMeteorites.getItem(inputItemId);
@@ -77,16 +89,27 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
             return;
         }
 
-        registerMeteoriteType(normalizedId, input, source, model, catalysts, blocks, weights);
+        registerMeteoriteType(normalizedId, input, source, model, catalysts, blocks, weights, layer);
     }
 
     public static void registerMeteoriteType(Item input, double source, int model, Block[] meteorites, int[] weights) {
         Item catalysts = ItemsRegistry.SOURCE_GEM.get().asItem();
         String normalizedId = generateNormalizedId(input);
-        registerMeteoriteType(normalizedId, input, source, model, catalysts, meteorites, weights);
+        if (model == 3 || model == 4) {
+            ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 陨石模型 {} 需要层信息", normalizedId, model);
+            return;
+        }
+        int[] layer = { 0 };
+        registerMeteoriteType(normalizedId, input, source, model, catalysts, meteorites, weights, layer);
     }
 
-    public static void registerMeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights) {
+    public static void registerMeteoriteType(Item input, double source, int model, Block[] meteorites, int[] weights, int[] layer) {
+        Item catalysts = ItemsRegistry.SOURCE_GEM.get().asItem();
+        String normalizedId = generateNormalizedId(input);
+        registerMeteoriteType(normalizedId, input, source, model, catalysts, meteorites, weights, layer);
+    }
+
+    public static void registerMeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights, int[] layer) {
         if (weights.length != meteorites.length) {
             ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 权重数组长度不匹配", id);
             return;
@@ -95,9 +118,38 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
         int totalWeight = 0;
         for (int weight : weights) totalWeight += weight;
 
+        int[] newLayer;
+        if (model == 3 || model == 4) {
+            if (layer.length % 2 != 0) {
+                ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 层级参数错误", id);
+                return;
+            }
+
+            int TotalLayers = layer.length / 2;
+
+            int m = meteorites.length;
+            for (int i = 0; i < TotalLayers; i++) m -= layer[i];
+            if (m < 0) {
+                ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 层中方块数量大于总方块数", id);
+                return;
+            }
+
+            int[] TotalMeteoritesWeights = new int[TotalLayers + 2];
+            TotalMeteoritesWeights[TotalLayers] = TotalLayers;
+            for (int i = 0; i < TotalLayers; i++) TotalMeteoritesWeights[TotalLayers + 1] += layer[TotalLayers + i];
+
+            int k = 0;
+            for (int i = 0; i < TotalLayers; i++) {
+                for (int j = 0; j < layer[i]; j++) TotalMeteoritesWeights[i] += weights[k + j];
+                k += layer[i];
+            }
+
+            newLayer = IntStream.concat(Arrays.stream(layer), Arrays.stream(TotalMeteoritesWeights)).toArray();
+        } else newLayer = layer;
+
         try {
             RecipeRegistry.registerMeteoriteType(
-                    new RecipeRegistry.MeteoriteType(id, input, source, model, catalysts, meteorites, weights, totalWeight));
+                    new RecipeRegistry.MeteoriteType(id, input, source, model, catalysts, meteorites, weights, totalWeight, newLayer));
         } catch (IllegalStateException e) {
             ArsMeteorites.LOGGER.error("注册陨石类型失败: {}", id);
         }

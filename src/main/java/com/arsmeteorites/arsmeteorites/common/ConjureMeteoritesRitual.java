@@ -128,7 +128,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
     private void generateMeteoriteLayer(Level world, int radius) {
         if (radius == 0) {
-            world.setBlock(center, getRandomMeteoriteBlock(), 3);
+            world.setBlock(center, currentMeteoriteType.meteorites()[0].defaultBlockState(), 3);
             return;
         }
 
@@ -136,22 +136,22 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         int innerRadiusSq = (radius - 1) * (radius - 1);
 
         if (model == 0) {
-            iterateSphereBlocks(radius, radiusSq, innerRadiusSq, (pos) -> {
-                if (world.getBlockState(pos).isAir()) {
-                    world.setBlock(pos, getRandomMeteoriteBlock(), 3);
-                }
-            });
+            iterateSphereBlocks(world, radius, radiusSq, innerRadiusSq, (pos) -> world.setBlock(pos, getRandomMeteoriteBlock(), 3));
         } else if (model == 1) {
             BlockState MeteoriteBlock = getFixedBlockForLayer();
-            iterateSphereBlocks(radius, radiusSq, innerRadiusSq, (pos) -> {
-                if (world.getBlockState(pos).isAir()) {
-                    world.setBlock(pos, MeteoriteBlock, 3);
-                }
-            });
+            iterateSphereBlocks(world, radius, radiusSq, innerRadiusSq, (pos) -> world.setBlock(pos, MeteoriteBlock, 3));
+        } else if (model == 2) {
+            BlockState MeteoriteBlock = getRandomMeteoriteBlock();
+            iterateSphereBlocks(world, radius, radiusSq, innerRadiusSq, (pos) -> world.setBlock(pos, MeteoriteBlock, 3));
+        } else if (model == 3) {
+            iterateSphereBlocks(world, radius, radiusSq, innerRadiusSq, (pos) -> world.setBlock(pos, getLayeredMeteoriteBlock(), 3));
+        } else if (model == 4) {
+            BlockState MeteoriteBlock = getLayeredMeteoriteBlock();
+            iterateSphereBlocks(world, radius, radiusSq, innerRadiusSq, (pos) -> world.setBlock(pos, MeteoriteBlock, 3));
         }
     }
 
-    private void iterateSphereBlocks(int radius, int radiusSq, int innerRadiusSq, java.util.function.Consumer<BlockPos> blockAction) {
+    private void iterateSphereBlocks(Level world, int radius, int radiusSq, int innerRadiusSq, java.util.function.Consumer<BlockPos> blockAction) {
         for (int x = -radius; x <= radius; x++) {
             int xSq = x * x;
 
@@ -167,7 +167,9 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
                     int distanceSq = xySq + z * z;
                     if (distanceSq <= radiusSq && distanceSq > innerRadiusSq) {
                         BlockPos pos = center.offset(x, y, z);
-                        blockAction.accept(pos);
+                        if (world.getBlockState(pos).isAir()) {
+                            blockAction.accept(pos);
+                        }
                     }
                 }
             }
@@ -206,9 +208,40 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         return blocks[blocks.length - 1].defaultBlockState();
     }
 
+    private BlockState getLayeredMeteoriteBlock() {
+        int[] layerData = currentMeteoriteType.layer();
+        Block[] blocks = currentMeteoriteType.meteorites();
+        int[] weights = currentMeteoriteType.weights();
+
+        int totalLayers = layerData[layerData.length - 2];
+
+        int layers = 0;
+
+        int layersTargetWeight = (layerData[layerData.length - 1] * CurrentRadius / TargetRadius);
+
+        int layersCumulativeWeight = 0;
+        for (int i = 0; i < totalLayers; i++) {
+            layersCumulativeWeight += layerData[totalLayers + i];
+            if (layersTargetWeight <= layersCumulativeWeight) {
+                layers = i;
+                break;
+            }
+        }
+
+        int targetWeight = rand.nextInt(layerData[totalLayers * 2 + layers]);
+
+        int cumulativeWeight = 0;
+        int startingBlock = 0;
+        for (int i = 0; i < layers; i++) startingBlock += layerData[i];
+        for (int i = 0; i < layerData[layers]; i++) {
+            cumulativeWeight += weights[startingBlock + i];
+            if (targetWeight < cumulativeWeight) return blocks[startingBlock + i].defaultBlockState();
+        }
+        return blocks[startingBlock].defaultBlockState();
+    }
+
     private void getCenter(Level world, int XOffset, int ZOffset, int radius) {
         center = Objects.requireNonNull(getPos()).offset(XOffset, radius << 1, ZOffset);
-        System.out.println("METEORITR_WAY 配置值: " + MeteoriteRitualConfig.METEORITR_WAY.get());
 
         if (MeteoriteRitualConfig.METEORITR_WAY.get()) {
             if (hasNonAirBlocks(world, center, radius << 1, radius)) {

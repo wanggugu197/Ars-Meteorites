@@ -61,15 +61,32 @@ public class MeteoriteRitualConfig {
                 陨石中方块的数组，
                 and the array of weights corresponding to the meteorite blocks.
                 对应陨石方块的权重的数组
-                
+
                 An optional element is also required int model default value 0
                 还需要一个可选元素 int model 默认值 0
                 The following is the corresponding relationship
                 下面是对应关系
-                0 Corresponding standard random meteorite
-                0 对应标准随机陨石
-                1 Corresponding to standard level meteorites
-                1 对应标准层次陨石
+                0 Corresponding to Completely random meteorites
+                0 对应 完全的随机陨石
+                1 Corresponding to Fixed layer meteorite
+                1 对应 固定的层陨石
+                2 Corresponding to Random layer Meteorites
+                2 对应 随机的层陨石
+                3 Corresponding to Layered random meteorites
+                3 对应 分层的随机陨石
+                4 Corresponding to Random layer meteorites with layer restrictions
+                4 对应 分层的随机层陨石
+
+                When model is 3 or 4, the parameter int[] layer is required to set additional layers
+                当model为3或4时需要参数 int[] layer 来进行额外的层设置
+                int[] layer contains an even number of parameters, which are the number of blocks in meteorites corresponding to each layer and the weight of each layer
+                int[] layer 中包含偶数个参数，分别为每层对应 meteorites 中方块的数量，和每层的权重
+                For example, "layer": [1, 5, 2, 10, 30, 60] means that this meteorite has 3 layers with a total weight of 100
+                If the radius of the meteorite is 30, the first layer is the first block in meteorites, occupying a radius of 0-3,
+                the second layer is the second to sixth blocks in meteorites, occupying a radius of 4-12,
+                and the third layer is the seventh to eighth blocks in meteorites, occupying a radius of 13-30.
+                比如 "layer": [1, 5, 2, 10, 30, 60] 代表这个陨石有3层，总权重为100
+                假如陨石半径为30，第1层是meteorites中第1个方块，占据半径0-3，第2层是meteorites中第2-6个方块，占据半径4-12，第3层是meteorites中第7-8个方块，占据半径13-30
 
                 For example
                 例如

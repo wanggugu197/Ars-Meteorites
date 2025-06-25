@@ -22,7 +22,7 @@ import static com.arsmeteorites.arsmeteorites.common.recipe.LinkageFormula.Linka
 @Mod.EventBusSubscriber(modid = ArsMeteorites.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RecipeRegistry {
 
-    public record MeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights, int totalWeight) {}
+    public record MeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights, int totalWeight, int[] layer) {}
 
     private static final Map<Item, MeteoriteType> TYPE_BY_INPUT = new HashMap<>();
 

@@ -228,10 +228,10 @@ public class BasicFormula {
                         Blocks.COAL_BLOCK
                 },
                 new int[] {
-                        5,5,
-                        5,5,
-                        5,5,
-                        5,5,
+                        5, 5,
+                        5, 5,
+                        5, 5,
+                        5, 5,
                         5
                 });
     }

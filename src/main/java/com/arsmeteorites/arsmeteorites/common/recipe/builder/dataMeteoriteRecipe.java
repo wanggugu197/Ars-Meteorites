@@ -11,7 +11,8 @@ public record dataMeteoriteRecipe(
                                   int model,
                                   String catalysts,
                                   String[] meteoriteBlockIds,
-                                  int[] weights) {
+                                  int[] weights,
+                                  int[] layer) {
 
     public static dataMeteoriteRecipe fromJson(JsonObject json) {
         String inputItemId = GsonHelper.getAsString(json, "input");
@@ -32,6 +33,14 @@ public record dataMeteoriteRecipe(
             weights[i] = weightsArray.get(i).getAsInt();
         }
 
-        return new dataMeteoriteRecipe(inputItemId, source, model, catalysts, blockIds, weights);
+        JsonArray layerArray = GsonHelper.getAsJsonArray(json, "layer", null);
+
+        int[] layer;
+        if (layerArray != null) {
+            layer = new int[layerArray.size()];
+            for (int i = 0; i < layerArray.size(); i++) layer[i] = layerArray.get(i).getAsInt();
+        } else layer = new int[0];
+
+        return new dataMeteoriteRecipe(inputItemId, source, model, catalysts, blockIds, weights, layer);
     }
 }

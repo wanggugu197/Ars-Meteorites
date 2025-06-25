@@ -142,5 +142,29 @@ public class LinkageFormula {
                     new int[] { 200, 200, 100, 150, 150, 60, 80, 80, 80, 80, 80, 80, 80, 20, 20, 30, 30, 20, 30, 20, 60, 40, 20, 15, 10, 1 });
 
         }
+        if (isModLoaded("ae2")) {
+            MeteoriteRegistryHelper.registerMeteoriteType(
+                    "ae2:singularity",
+                    10, 3,
+                    "ae2:fluix_pearl",
+                    new String[] {
+                            "ae2:mysterious_cube",
+
+                            "ae2:flawless_budding_quartz",
+                            "ae2:flawed_budding_quartz",
+                            "ae2:chipped_budding_quartz",
+                            "ae2:damaged_budding_quartz",
+                            "ae2:quartz_block",
+                            "ae2:fluix_block",
+
+                            "ae2:quartz_block",
+                            "ae2:fluix_block",
+                            "ae2:sky_stone_block",
+                            "ae2:smooth_sky_stone_block"
+                    },
+                    new int[] { 1, 50, 60, 70, 80, 90, 20, 10, 5, 150, 50 },
+                    new int[] { 1, 6, 4, 10, 50, 100 });
+
+        }
     }
 }

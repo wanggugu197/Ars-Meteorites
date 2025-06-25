@@ -13,4 +13,7 @@ dependencies {
     modCompileOnly("mezz.jei:jei-$project.minecraft_version-forge:$project.jei_version") { transitive false }
 
     modCompileOnly("dev.emi:emi-forge:${project.emi_version}")
+
+    // modImplementation("appeng:appliedenergistics2-forge:15.4.5") { transitive false }
+    // modImplementation("org.appliedenergistics:guideme:20.1.7")
 }
