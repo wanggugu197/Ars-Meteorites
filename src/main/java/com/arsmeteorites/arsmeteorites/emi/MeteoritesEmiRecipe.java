@@ -50,7 +50,7 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
 
     @Override
     public List<EmiIngredient> getCatalysts() {
-        return List.of(EmiStack.of(Ritual), EmiStack.of(recipe.catalysts()));
+        return List.of(EmiStack.of(Ritual), EmiStack.of(recipe.consumeitem()));
     }
 
     @Override
@@ -122,7 +122,7 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
             widgets.addSlot(EmiStack.of(recipe.input()), 2, backgroundHeight - 50).appendTooltip(Component.translatable("tooltip.arsmeteorites.input")).drawBack(false);
         }
 
-        widgets.addSlot(EmiStack.of(recipe.catalysts()), 18, backgroundHeight - 34)
+        widgets.addSlot(EmiStack.of(recipe.consumeitem()), 18, backgroundHeight - 34)
                 .appendTooltip(Component.translatable("tooltip.arsmeteorites.source_gem")).recipeContext(this).drawBack(false);
 
         widgets.addText(

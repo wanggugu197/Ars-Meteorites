@@ -1,0 +1,12 @@
+{
+  "input": "minecraft:obsidian",
+  "source": 120,
+  "default": 0,
+  "catalysts": "ars_nouveau:source_gem",
+  "meteorites": [
+    "minecraft:obsidian",
+    "minecraft:basalt",
+    "minecraft:blackstone"
+  ],
+  "weights": [60, 30, 10]
+}

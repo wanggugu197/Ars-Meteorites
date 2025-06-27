@@ -134,6 +134,6 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
         }
 
         builder.addSlot(RecipeIngredientRole.CATALYST, 18, backgroundHeight - 34)
-                .addItemStack(new ItemStack(recipe.catalysts())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.source_gem")));
+                .addItemStack(new ItemStack(recipe.consumeitem())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.source_gem")));
     }
 }

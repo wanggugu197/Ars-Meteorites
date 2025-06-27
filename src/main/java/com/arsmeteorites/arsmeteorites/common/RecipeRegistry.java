@@ -22,7 +22,7 @@ import static com.arsmeteorites.arsmeteorites.common.recipe.LinkageFormula.Linka
 @Mod.EventBusSubscriber(modid = ArsMeteorites.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RecipeRegistry {
 
-    public record MeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights, int totalWeight, int[] layer) {}
+    public record MeteoriteType(String id, Item input, double source, int model, Item consumeitem, Block[] meteorites, int[] weights, int totalWeight, int[] layer) {}
 
     private static final Map<Item, MeteoriteType> TYPE_BY_INPUT = new HashMap<>();
 
@@ -37,7 +37,7 @@ public class RecipeRegistry {
 
     public static boolean isItemCanConsume(Item targetItem) {
         return TYPE_BY_INPUT.containsKey(targetItem) ||
-                TYPE_BY_INPUT.values().stream().anyMatch(type -> targetItem.equals(type.catalysts())) ||
+                TYPE_BY_INPUT.values().stream().anyMatch(type -> targetItem.equals(type.consumeitem())) ||
                 targetItem == BlockRegistry.MENDOSTEEN_POD.get().asItem() ||
                 targetItem == BlockRegistry.BASTION_POD.get().asItem() ||
                 targetItem == BlockRegistry.FROSTAYA_POD.get().asItem() ||
