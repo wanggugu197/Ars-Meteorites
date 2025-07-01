@@ -31,7 +31,7 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
     private final Font font;
 
     public MeteoritesRecipeCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(150, 145);
+        this.background = guiHelper.createBlankDrawable(150, 160);
         this.icon = guiHelper.createDrawableItemStack(
                 new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem()));
         this.title = Component.translatable("jei.category.arsmeteorites.meteorites");
@@ -81,7 +81,7 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, RecipeRegistry.MeteoriteType recipe, @NotNull IFocusGroup focuses) {
         int backgroundWidth = 150;
-        int backgroundHeight = 145;
+        int backgroundHeight = 160;
 
         Block[] meteorites = recipe.meteorites();
         int[] probabilities = recipe.weights();
@@ -126,7 +126,8 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
                 .addItemStack(new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.explode")));
 
         builder.addSlot(RecipeIngredientRole.CATALYST, 2, backgroundHeight - 34)
-                .addItemStack(new ItemStack(ArsMeteorites.getItem(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites")));
+                .addItemStack(new ItemStack(ArsMeteorites.getItem(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites")))
+                .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.model" + recipe.model())));
 
         if (recipe.input() != null) {
             builder.addSlot(RecipeIngredientRole.INPUT, 2, backgroundHeight - 50)

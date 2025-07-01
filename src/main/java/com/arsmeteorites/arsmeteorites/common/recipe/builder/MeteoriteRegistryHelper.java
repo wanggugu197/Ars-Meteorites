@@ -32,8 +32,6 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> entries, @NotNull ResourceManager manager, @NotNull ProfilerFiller profiler) {
-        ArsMeteorites.LOGGER.info("正在加载数据包陨石配方...");
-
         for (Map.Entry<ResourceLocation, JsonElement> entry : entries.entrySet()) {
             ResourceLocation recipeId = entry.getKey();
             JsonObject json = entry.getValue().getAsJsonObject();
@@ -49,16 +47,16 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
                         recipe.weights(),
                         recipe.layer());
             } catch (Exception e) {
-                ArsMeteorites.LOGGER.error("加载配方 {} 失败", recipeId);
+                ArsMeteorites.LOGGER.error("Failed to load recipe {}", recipeId);
             }
         }
 
-        ArsMeteorites.LOGGER.info("已加载 {} 个陨石配方", entries.size());
+        ArsMeteorites.LOGGER.info("{} meteorite recipes loaded via data pack", entries.size());
     }
 
     public static void registerMeteoriteType(String inputItemId, double source, int model, String catalyst, String[] blockIds, int[] weights) {
         if (model == 3 || model == 4) {
-            ArsMeteorites.LOGGER.error("无法注册陨石类型: 输入物品 {}, 陨石模型 {} 需要层信息", inputItemId, model);
+            ArsMeteorites.LOGGER.error("Unable to register meteorite type: Input item {}, meteorite model {} requires layer information", inputItemId, model);
             return;
         }
         int[] layer = { 0 };
@@ -70,7 +68,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
         Item input = ArsMeteorites.getItem(inputItemId);
         if (input == null) {
-            ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 物品 {} 不存在", normalizedId, inputItemId);
+            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: item {} does not exist", normalizedId, inputItemId);
             return;
         }
 
@@ -78,14 +76,14 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
         for (int i = 0; i < blockIds.length; i++) {
             blocks[i] = ArsMeteorites.getBlock(blockIds[i]);
             if (blocks[i] == Blocks.BARRIER) {
-                ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 方块 {} 不存在", normalizedId, blockIds[i]);
+                ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: block {} does not exist", normalizedId, blockIds[i]);
                 return;
             }
         }
 
         Item catalysts = ArsMeteorites.getItem(catalyst);
         if (catalysts == null) {
-            ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 催化剂 {} 不存在", normalizedId, catalyst);
+            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: Catalyst {} does not exist", normalizedId, catalyst);
             return;
         }
 
@@ -96,7 +94,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
         Item catalysts = ItemsRegistry.SOURCE_GEM.get().asItem();
         String normalizedId = generateNormalizedId(input);
         if (model == 3 || model == 4) {
-            ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 陨石模型 {} 需要层信息", normalizedId, model);
+            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: Meteorite model {} requires layer information", normalizedId, model);
             return;
         }
         int[] layer = { 0 };
@@ -111,7 +109,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
     public static void registerMeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights, int[] layer) {
         if (weights.length != meteorites.length) {
-            ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 权重数组长度不匹配", id);
+            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: weight array length mismatch", id);
             return;
         }
 
@@ -121,7 +119,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
         int[] newLayer;
         if (model == 3 || model == 4) {
             if (layer.length % 2 != 0) {
-                ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 层级参数错误", id);
+                ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: wrong level parameter", id);
                 return;
             }
 
@@ -130,7 +128,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
             int m = meteorites.length;
             for (int i = 0; i < TotalLayers; i++) m -= layer[i];
             if (m < 0) {
-                ArsMeteorites.LOGGER.error("无法注册陨石类型 {}: 层中方块数量大于总方块数", id);
+                ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: the number of blocks in the layer is greater than the total number of blocks", id);
                 return;
             }
 
@@ -151,7 +149,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
             RecipeRegistry.registerMeteoriteType(
                     new RecipeRegistry.MeteoriteType(id, input, source, model, catalysts, meteorites, weights, totalWeight, newLayer));
         } catch (IllegalStateException e) {
-            ArsMeteorites.LOGGER.error("注册陨石类型失败: {}", id);
+            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}", id);
         }
     }
 

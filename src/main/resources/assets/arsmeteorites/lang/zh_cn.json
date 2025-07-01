@@ -8,5 +8,10 @@
   "tooltip.arsmeteorites.explode": "小心爆炸",
   "tooltip.arsmeteorites.source_gem": "可用于提升陨石半径",
   "tooltip.arsmeteorites.input": "可用于选择陨石",
-  "tooltip.arsmeteorites.direction": "可用于调整陨石中心位置"
+  "tooltip.arsmeteorites.direction": "可用于调整陨石中心位置",
+  "tooltip.arsmeteorites.model0": "模式：完全的随机陨石",
+  "tooltip.arsmeteorites.model1": "模式：固定的层陨石",
+  "tooltip.arsmeteorites.model2": "模式：随机的层陨石",
+  "tooltip.arsmeteorites.model3": "模式：分层的随机陨石",
+  "tooltip.arsmeteorites.model4": "模式：分层的随机层陨石"
 }

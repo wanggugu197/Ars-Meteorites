@@ -49,10 +49,9 @@ public class RecipeRegistry {
         if (oldTypeById != null) {
             TYPE_BY_INPUT.remove(oldTypeById.input());
             TYPE_BY_INPUT.put(type.input(), type);
-            // ArsMeteorites.LOGGER.warn("覆盖已存在的陨石类型: {}", type.id());
+            ArsMeteorites.LOGGER.warn("Overwrite existing meteorite type: {}", type.id());
         } else {
             TYPE_BY_INPUT.put(type.input(), type);
-            // ArsMeteorites.LOGGER.info("成功注册陨石类型: {} (输入物品: {})", type.id(), type.input());
         }
     }
 

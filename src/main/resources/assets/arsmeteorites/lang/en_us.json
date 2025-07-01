@@ -8,5 +8,10 @@
   "tooltip.arsmeteorites.explode": "Beware of explosions",
   "tooltip.arsmeteorites.source_gem": "Can be used to increase the radius of meteorites",
   "tooltip.arsmeteorites.input": "Can be used to select meteorites",
-  "tooltip.arsmeteorites.direction": "Can be used to adjust the center position of the meteorite"
+  "tooltip.arsmeteorites.direction": "Can be used to adjust the center position of the meteorite",
+  "tooltip.arsmeteorites.model0": "Model：Completely random meteorites",
+  "tooltip.arsmeteorites.model1": "Model：Fixed layer meteorite",
+  "tooltip.arsmeteorites.model2": "Model：Random layer Meteorites",
+  "tooltip.arsmeteorites.model3": "Model：Layered random meteorites",
+  "tooltip.arsmeteorites.model4": "Model：Random layer meteorites with layer restrictions"
 }

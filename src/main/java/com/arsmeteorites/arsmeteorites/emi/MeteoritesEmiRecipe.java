@@ -67,13 +67,13 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
 
     @Override
     public int getDisplayHeight() {
-        return 145;
+        return 160;
     }
 
     @Override
     public void addWidgets(WidgetHolder widgets) {
         int backgroundWidth = 150;
-        int backgroundHeight = 145;
+        int backgroundHeight = 160;
 
         Block[] meteorites = recipe.meteorites();
         int[] probabilities = recipe.weights();
@@ -116,7 +116,8 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
 
         widgets.addSlot(EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()), 2, backgroundHeight - 18).appendTooltip(Component.translatable("tooltip.arsmeteorites.explode")).drawBack(false);
 
-        widgets.addSlot(EmiStack.of(Ritual), 2, backgroundHeight - 34).drawBack(false);
+        widgets.addSlot(EmiStack.of(Ritual), 2, backgroundHeight - 34)
+                .appendTooltip(Component.translatable("tooltip.arsmeteorites.model" + recipe.model())).drawBack(false);
 
         if (recipe.input() != null) {
             widgets.addSlot(EmiStack.of(recipe.input()), 2, backgroundHeight - 50).appendTooltip(Component.translatable("tooltip.arsmeteorites.input")).drawBack(false);
@@ -129,7 +130,6 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
                 Component.translatable("jei.arsmeteorites.source_cost", recipe.source()),
                 20, backgroundHeight - 12, 0xFFFFFF, false);
 
-        // 正确添加缩放纹理 (Forge 1.20.1 规范方式)
         ResourceLocation texture = new ResourceLocation(ArsMeteorites.MOD_ID, "textures/gui/direction.png");
         widgets.addTexture(texture, 2, 2, 16, 16, 0, 0, 48, 48, 48, 48)
                 .tooltipText(List.of(Component.translatable("tooltip.arsmeteorites.direction")));

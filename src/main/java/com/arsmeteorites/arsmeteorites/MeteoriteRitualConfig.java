@@ -25,19 +25,21 @@ public class MeteoriteRitualConfig {
     private static void initConfig() {
         BUILDER.push("Meteorite Ritual Settings");
 
-        BASE_RADIUS = BUILDER.comment("Base radius of the meteorite sphere\n陨石球基础半径")
+        BASE_RADIUS = BUILDER.comment("\nBase radius of the meteorite sphere\n陨石球基础半径")
                 .defineInRange("baseRadius", 7, 1, 100);
 
-        MAX_RADIUS = BUILDER.comment("Maximum possible radius of a meteorite ball\n陨石球最大可能半径")
+        MAX_RADIUS = BUILDER.comment("\nMaximum possible radius of a meteorite ball\n陨石球最大可能半径")
                 .defineInRange("maxRadius", 30, 1, 100);
 
-        METEORITR_WAY = BUILDER.comment("true--Call of the Dark Rift--陨石召唤\nfalse--Mark of the Falling Tower--坠星标位")
-                .define("MeteoriteWay", true);
+        METEORITR_WAY = BUILDER.comment("\ntrue--Call of the Dark Rift--陨石召唤\nfalse--Mark of the Falling Tower--坠星标位")
+                .define("MeteoriteWay", false);
 
-        ENABLE_RECIPE = BUILDER.comment("Enables recipes defined by this mod\n启用此模组定义的配方")
+        ENABLE_RECIPE = BUILDER.comment("\nEnables recipes defined by this mod\n启用此模组定义的配方")
                 .define("enableRecipe", true);
 
         ENABLE_DTAT_RECIPE = BUILDER.comment("""
+
+
                 Enable data pack recipe loading
                 启用数据包配方
 
@@ -46,7 +48,7 @@ public class MeteoriteRitualConfig {
                 If you need it, please register it yourself and put it in meteorite_recipes under the mod
                 如果你需要请自行注册并放于mod下meteorite_recipes中
                 The data packet needs to contain the following five elements
-                数据包中需要包含一下五个元素
+                数据包中需要包含以下五个元素
 
                 input   source   catalysts   meteorites   weights
                 string  double   string      string[]     int[]
@@ -93,7 +95,7 @@ public class MeteoriteRitualConfig {
                 {
                   "input": "minecraft:obsidian",
                   "source": 120,
-                  "default": 0,     //Optional 可选
+                  "model": 0,     //Optional 可选
                   "catalysts": "ars_nouveau:source_gem",
                   "meteorites": [
                     "minecraft:obsidian",

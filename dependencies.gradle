@@ -10,10 +10,10 @@ dependencies {
     modCompileOnly("software.bernie.geckolib:geckolib-forge-${minecraft_version}:4.7.1.2")
     modImplementation("top.theillusivec4.curios:curios-forge:${project.curiosVersion}+${project.minecraft_version}")
 
-    modCompileOnly("mezz.jei:jei-$project.minecraft_version-forge:$project.jei_version") { transitive false }
+    modCompileOnly("mezz.jei:jei-$project.minecraft_version-forge:$project.jei_version")
 
     modCompileOnly("dev.emi:emi-forge:${project.emi_version}")
 
-    // modImplementation("appeng:appliedenergistics2-forge:15.4.5") { transitive false }
+    // modImplementation("appeng:appliedenergistics2-forge:15.4.5")
     // modImplementation("org.appliedenergistics:guideme:20.1.7")
 }
