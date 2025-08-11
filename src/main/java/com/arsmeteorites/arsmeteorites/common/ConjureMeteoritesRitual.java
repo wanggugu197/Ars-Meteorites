@@ -61,7 +61,8 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
     public void onStart(@Nullable Player player) {
         super.onStart(player);
         Level world = getWorld();
-        if (world != null && world.isClientSide) return;
+        if (world == null) return;
+        if (world.isClientSide) return;
 
         int minRadius = MeteoriteRitualConfig.BASE_RADIUS.get();
         int maxRadius = MeteoriteRitualConfig.MAX_RADIUS.get();
@@ -92,12 +93,12 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
         TargetRadius = Math.min(minRadius + map.getInt(currentMeteoriteType.consumeitem()), maxRadius);
 
-        ZOffset += map.getInt(BlockRegistry.FROSTAYA_POD.get().asItem());
-        ZOffset -= map.getInt(BlockRegistry.BOMBEGRANTE_POD.get().asItem());
+        ZOffset += map.getInt(BlockRegistry.BOMBEGRANTE_POD.get().asItem());
+        ZOffset -= map.getInt(BlockRegistry.FROSTAYA_POD.get().asItem());
         XOffset += map.getInt(BlockRegistry.MENDOSTEEN_POD.get().asItem());
         XOffset -= map.getInt(BlockRegistry.BASTION_POD.get().asItem());
 
-        checkTime = 500;
+        checkTime = world.getHeight();
         isCenterCheck = false;
         center = Objects.requireNonNull(getPos()).offset(XOffset, TargetRadius << 1, ZOffset);
     }
@@ -259,7 +260,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             }
         } else {
             for (int i = 0; i < 4; i++) {
-                if (checkTime == 500) {
+                if (checkTime == world.getHeight()) {
                     center = center.atY(world.getMaxBuildHeight());
                     destructionValue = (TargetRadius * TargetRadius * TargetRadius / 5);
                     checkTime--;
@@ -317,7 +318,8 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             for (int dz = -2; dz <= 2; dz++) {
                 BlockPos pos = center.offset(dx, 0, dz);
                 BlockState state = world.getBlockState(pos);
-                if (state.getBlock() == Blocks.BEDROCK) return 1000000000;
+                Block block = state.getBlock();
+                if (block == Blocks.BEDROCK || block == Blocks.REINFORCED_DEEPSLATE || block == Blocks.END_PORTAL_FRAME) return 1000000000;
                 if (!state.isAir()) {
                     float hardness = state.getDestroySpeed(world, pos);
                     if (hardness > 0) hardnessSum += hardness;
@@ -334,8 +336,8 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             for (int dz = -(int) outerRad; dz <= outerRad; dz++) {
                 int distSq = dx * dx + dz * dz;
                 BlockPos pos = center.offset(dx, 0, dz);
-
-                if (world.getBlockState(pos).getBlock() == Blocks.BEDROCK) return 1000000000;
+                Block block = world.getBlockState(pos).getBlock();
+                if (block == Blocks.BEDROCK || block == Blocks.REINFORCED_DEEPSLATE || block == Blocks.END_PORTAL_FRAME) return 1000000000;
                 if (distSq <= innerRadSq) world.destroyBlock(pos, false);
                 else if (distSq <= outerRadSq)
                     if (world.random.nextInt(100) < 70) world.destroyBlock(pos, false);
@@ -384,5 +386,11 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
     @Override
     public int getParticleIntensity() {
         return 250;
+    }
+
+    @Override
+    @Deprecated(since = "4.11.0", forRemoval = true)
+    public boolean canBeTraded() {
+        return false;
     }
 }
