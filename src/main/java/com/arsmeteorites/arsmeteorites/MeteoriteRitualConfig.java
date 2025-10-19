@@ -26,10 +26,10 @@ public class MeteoriteRitualConfig {
         BUILDER.push("Meteorite Ritual Settings");
 
         BASE_RADIUS = BUILDER.comment("\nBase radius of the meteorite sphere\n陨石球基础半径")
-                .defineInRange("baseRadius", 7, 1, 100);
+                .defineInRange("baseRadius", 7, 1, 500);
 
         MAX_RADIUS = BUILDER.comment("\nMaximum possible radius of a meteorite ball\n陨石球最大可能半径")
-                .defineInRange("maxRadius", 30, 1, 100);
+                .defineInRange("maxRadius", 30, 1, 500);
 
         METEORITR_WAY = BUILDER.comment("\ntrue--Call of the Dark Rift--陨石召唤\nfalse--Mark of the Falling Tower--坠星标位")
                 .define("MeteoriteWay", false);
