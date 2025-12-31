@@ -3,6 +3,7 @@ package com.arsmeteorites.arsmeteorites.common.recipe.builder;
 import com.arsmeteorites.arsmeteorites.ArsMeteorites;
 import com.arsmeteorites.arsmeteorites.common.RecipeRegistry;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -10,7 +11,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -31,7 +31,8 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> entries, @NotNull ResourceManager manager, @NotNull ProfilerFiller profiler) {
+    protected void apply(Map<ResourceLocation, JsonElement> entries, @NotNull ResourceManager manager,
+                         @NotNull ProfilerFiller profiler) {
         for (Map.Entry<ResourceLocation, JsonElement> entry : entries.entrySet()) {
             ResourceLocation recipeId = entry.getKey();
             JsonObject json = entry.getValue().getAsJsonObject();
@@ -54,21 +55,26 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
         ArsMeteorites.LOGGER.info("{} meteorite recipes loaded via data pack", entries.size());
     }
 
-    public static void registerMeteoriteType(String inputItemId, double source, int model, String catalyst, String[] blockIds, int[] weights) {
+    public static void registerMeteoriteType(String inputItemId, double source, int model, String catalyst,
+                                             String[] blockIds, int[] weights) {
         if (model == 3 || model == 4) {
-            ArsMeteorites.LOGGER.error("Unable to register meteorite type: Input item {}, meteorite model {} requires layer information", inputItemId, model);
+            ArsMeteorites.LOGGER.error(
+                    "Unable to register meteorite type: Input item {}, meteorite model {} requires layer information",
+                    inputItemId, model);
             return;
         }
         int[] layer = { 0 };
         registerMeteoriteType(inputItemId, source, model, catalyst, blockIds, weights, layer);
     }
 
-    public static void registerMeteoriteType(String inputItemId, double source, int model, String catalyst, String[] blockIds, int[] weights, int[] layer) {
+    public static void registerMeteoriteType(String inputItemId, double source, int model, String catalyst,
+                                             String[] blockIds, int[] weights, int[] layer) {
         String normalizedId = generateNormalizedId(inputItemId);
 
         Item input = ArsMeteorites.getItem(inputItemId);
         if (input == null) {
-            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: item {} does not exist", normalizedId, inputItemId);
+            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: item {} does not exist", normalizedId,
+                    inputItemId);
             return;
         }
 
@@ -76,14 +82,16 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
         for (int i = 0; i < blockIds.length; i++) {
             blocks[i] = ArsMeteorites.getBlock(blockIds[i]);
             if (blocks[i] == Blocks.BARRIER) {
-                ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: block {} does not exist", normalizedId, blockIds[i]);
+                ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: block {} does not exist",
+                        normalizedId, blockIds[i]);
                 return;
             }
         }
 
         Item catalysts = ArsMeteorites.getItem(catalyst);
         if (catalysts == null) {
-            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: Catalyst {} does not exist", normalizedId, catalyst);
+            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: Catalyst {} does not exist", normalizedId,
+                    catalyst);
             return;
         }
 
@@ -94,20 +102,24 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
         Item catalysts = ItemsRegistry.SOURCE_GEM.get().asItem();
         String normalizedId = generateNormalizedId(input);
         if (model == 3 || model == 4) {
-            ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: Meteorite model {} requires layer information", normalizedId, model);
+            ArsMeteorites.LOGGER.error(
+                    "Unable to register meteorite type {}: Meteorite model {} requires layer information", normalizedId,
+                    model);
             return;
         }
         int[] layer = { 0 };
         registerMeteoriteType(normalizedId, input, source, model, catalysts, meteorites, weights, layer);
     }
 
-    public static void registerMeteoriteType(Item input, double source, int model, Block[] meteorites, int[] weights, int[] layer) {
+    public static void registerMeteoriteType(Item input, double source, int model, Block[] meteorites, int[] weights,
+                                             int[] layer) {
         Item catalysts = ItemsRegistry.SOURCE_GEM.get().asItem();
         String normalizedId = generateNormalizedId(input);
         registerMeteoriteType(normalizedId, input, source, model, catalysts, meteorites, weights, layer);
     }
 
-    public static void registerMeteoriteType(String id, Item input, double source, int model, Item catalysts, Block[] meteorites, int[] weights, int[] layer) {
+    public static void registerMeteoriteType(String id, Item input, double source, int model, Item catalysts,
+                                             Block[] meteorites, int[] weights, int[] layer) {
         if (weights.length != meteorites.length) {
             ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: weight array length mismatch", id);
             return;
@@ -128,7 +140,9 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
             int m = meteorites.length;
             for (int i = 0; i < TotalLayers; i++) m -= layer[i];
             if (m < 0) {
-                ArsMeteorites.LOGGER.error("Unable to register meteorite type {}: the number of blocks in the layer is greater than the total number of blocks", id);
+                ArsMeteorites.LOGGER.error(
+                        "Unable to register meteorite type {}: the number of blocks in the layer is greater than the total number of blocks",
+                        id);
                 return;
             }
 
@@ -147,7 +161,8 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
         try {
             RecipeRegistry.registerMeteoriteType(
-                    new RecipeRegistry.MeteoriteType(id, input, source, model, catalysts, meteorites, weights, totalWeight, newLayer));
+                    new RecipeRegistry.MeteoriteType(id, input, source, model, catalysts, meteorites, weights,
+                            totalWeight, newLayer));
         } catch (IllegalStateException e) {
             ArsMeteorites.LOGGER.error("Unable to register meteorite type {}", id);
         }
@@ -159,7 +174,7 @@ public class MeteoriteRegistryHelper extends SimpleJsonResourceReloadListener {
 
     public static String generateNormalizedId(Item item) {
         if (item != null) {
-            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
+            ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item);
             return itemId.getNamespace() + "-" + itemId.getPath();
         } else {
             return "default";

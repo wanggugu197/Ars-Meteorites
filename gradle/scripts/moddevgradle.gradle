@@ -1,49 +1,134 @@
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "${mod_id}.mixins.json"
+static def isJetBrainsRuntime() {
+    return System.getProperty('java.vm.vendor').contains('JetBrains')
 }
 
-legacyForge {
-    version = "${minecraft_version}-${forge_version}"
+neoForge {
+    // Specify NeoForge version
+    version = libs.versions.neoForge.get()
 
     parchment {
-        minecraftVersion = parchment_minecraft_version
-        mappingsVersion = parchment_mappings_version
+        minecraftVersion = libs.versions.minecraft.get()
+        mappingsVersion = libs.versions.parchment.get()
     }
 
+    // This line is optional. Access Transformers are automatically detected
+    accessTransformers {
+        var file = project.file('src/main/resources/META-INF/accesstransformer.cfg')
+        from(file)
+        publish(file)
+    }
+
+    addModdingDependenciesTo(sourceSets.test)
+//    addModdingDependenciesTo(sourceSets.extra)
+
+    mods {
+        // define mod <-> source bindings
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+            sourceSet(sourceSets.client)
+            sourceSet(sourceSets.test)
+            sourceSet(sourceSets.extra)
+            sourceSet(sourceSets.clientExtra)
+        }
+    }
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             client()
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            sourceSet = sourceSets.clientExtra
+            ideName = "Client 1"
+
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        }
+
+        client2 {
+            client()
+            sourceSet = sourceSets.clientExtra
+            ideName = "Client 2"
+
+            programArguments.addAll('--username', 'YoungOnion', '--uuid', '3a27782d-6864-4814-a9fe-7c6931f29a8a')
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
         }
 
         server {
             server()
+            sourceSet = sourceSets.extra
+            ideName = "Server"
+
+            gameDirectory.set(file('run/server'))
+            programArguments.addAll('--nogui', '--world', 'world-extra')
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        }
+
+        // Client with Jade, EMI, AE2
+        cleanClient {
+            client()
+            sourceSet = sourceSets.client
+            ideName = "Clean Client"
+
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        }
+
+        cleanServer {
+            server()
+            sourceSet = sourceSets.main
+            ideName = "Clean Server"
+
+            gameDirectory.set(file('run/server'))
             programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        }
+
+        // This run config launches GameTestServer and runs all registered gametests, then exits.
+        // By default, the server will crash when no gametests are provided.
+        // The gametest system is also enabled by default for other run configs under the /test command.
+        gameTestServer {
+            type = "gameTestServer"
+            sourceSet = sourceSets.test
+            ideName = "Game Tests"
+
+            gameDirectory.set(file('run/gametest'))
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
         }
 
         data {
             data()
-            ideName = "Data"
+            sourceSet = sourceSets.main
+            ideName = "Data Generation"
+
             gameDirectory.set(file('run/data'))
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             programArguments.addAll('--mod', project.mod_id)
             programArguments.addAll('--all')
             programArguments.addAll('--output', file('src/generated/resources/').getAbsolutePath())
             programArguments.addAll('--existing', file('src/main/resources/').getAbsolutePath())
         }
 
+        // applies to all the run configs above
         configureEach {
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
             systemProperty 'forge.logging.markers', 'REGISTRIES'
+            // Enable assertions for our classes in dev environment
+            jvmArgument('-ea:com.ResourceFarm.ResourceFarm...')
+
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             logLevel = org.slf4j.event.Level.INFO
         }
     }
+}
 
-    mods {
-        "${mod_id}" {
-            sourceSet(sourceSets.main)
-        }
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
-
-    accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 }

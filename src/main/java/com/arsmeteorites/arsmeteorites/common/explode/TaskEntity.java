@@ -2,6 +2,7 @@ package com.arsmeteorites.arsmeteorites.common.explode;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -30,7 +31,7 @@ public final class TaskEntity extends Entity {
     @Override
     public void tick() {
         if (consumer == null) {
-            discard();
+            this.remove(RemovalReason.DISCARDED);
         } else {
             consumer.accept(this);
         }
@@ -45,7 +46,7 @@ public final class TaskEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {}
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {}
 
     @Override
     protected void readAdditionalSaveData(@NotNull CompoundTag compound) {}

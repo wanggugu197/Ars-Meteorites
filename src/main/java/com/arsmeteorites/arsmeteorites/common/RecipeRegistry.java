@@ -6,9 +6,9 @@ import com.arsmeteorites.arsmeteorites.common.recipe.builder.MeteoriteRegistryHe
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 
@@ -19,10 +19,11 @@ import javax.annotation.Nullable;
 import static com.arsmeteorites.arsmeteorites.common.recipe.BasicFormula.BasicFormulaRegistration;
 import static com.arsmeteorites.arsmeteorites.common.recipe.LinkageFormula.LinkageFormulaRegistration;
 
-@Mod.EventBusSubscriber(modid = ArsMeteorites.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = ArsMeteorites.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class RecipeRegistry {
 
-    public record MeteoriteType(String id, Item input, double source, int model, Item consumeitem, Block[] meteorites, int[] weights, int totalWeight, int[] layer) {}
+    public record MeteoriteType(String id, Item input, double source, int model, Item consumeitem, Block[] meteorites,
+                                int[] weights, int totalWeight, int[] layer) {}
 
     private static final Map<Item, MeteoriteType> TYPE_BY_INPUT = new HashMap<>();
 

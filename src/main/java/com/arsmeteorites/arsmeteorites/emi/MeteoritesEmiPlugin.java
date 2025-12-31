@@ -15,7 +15,7 @@ import dev.emi.emi.api.stack.EmiStack;
 public class MeteoritesEmiPlugin implements EmiPlugin {
 
     public static final EmiRecipeCategory METEORITES_CATEGORY = new EmiRecipeCategory(
-            new ResourceLocation(ArsMeteorites.MOD_ID, "meteorites"),
+            ResourceLocation.fromNamespaceAndPath(ArsMeteorites.MOD_ID, "meteorites"),
             EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()));
 
     @Override

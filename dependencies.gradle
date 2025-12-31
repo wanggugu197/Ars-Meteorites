@@ -4,16 +4,16 @@ dependencies {
     api(annotationProcessor("io.github.llamalad7:mixinextras-common:$project.mixinextras_version"))
     annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
 
-    modCompileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${project.minecraft_version}:4.12.6.256")
-    modRuntimeOnly("curse.maven:ars-nouveau-401955:5894609")
+    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${project.minecraft_version}:5.10.6.1256")
+    runtimeOnly("curse.maven:ars-nouveau-401955:7100043")
 
-    modCompileOnly("software.bernie.geckolib:geckolib-forge-${minecraft_version}:4.7.1.2")
-    modImplementation("top.theillusivec4.curios:curios-forge:${project.curiosVersion}+${project.minecraft_version}")
+    implementation("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${project.geckolib_version}")
+    implementation("top.theillusivec4.curios:curios-neoforge:${project.curiosVersion}+${project.minecraft_version}")
 
-    modCompileOnly("mezz.jei:jei-$project.minecraft_version-forge:$project.jei_version")
+    compileOnly("mezz.jei:jei-$project.minecraft_version-neoforge:$project.jei_version")
 
-    modCompileOnly("dev.emi:emi-forge:${project.emi_version}")
+    compileOnly("dev.emi:emi-neoforge:${project.emi_version}")
 
-    // modImplementation("appeng:appliedenergistics2-forge:15.4.5")
-    // modImplementation("org.appliedenergistics:guideme:20.1.7")
+    // implementation("appeng:appliedenergistics2-forge:15.4.5")
+    // implementation("org.appliedenergistics:guideme:20.1.7")
 }

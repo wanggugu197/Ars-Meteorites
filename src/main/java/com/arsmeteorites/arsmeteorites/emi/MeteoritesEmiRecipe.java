@@ -28,7 +28,7 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
 
     public MeteoritesEmiRecipe(RecipeRegistry.MeteoriteType recipe) {
         this.recipe = recipe;
-        this.id = new ResourceLocation(ArsMeteorites.MOD_ID, "/" + recipe.id().toLowerCase());
+        this.id = ResourceLocation.fromNamespaceAndPath(ArsMeteorites.MOD_ID, "/" + recipe.id().toLowerCase());
     }
 
     @Override
@@ -107,30 +107,36 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
                 int itemIndex = meteorites.length - remainingItems + i;
 
                 widgets.addSlot(EmiStack.of(meteorites[itemIndex]), x, y)
-                        .appendTooltip(Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex])).recipeContext(this).drawBack(false);
+                        .appendTooltip(
+                                Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex]))
+                        .recipeContext(this).drawBack(false);
             }
 
             remainingItems -= itemsInThisCircle;
             currentCircle++;
         }
 
-        widgets.addSlot(EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()), 2, backgroundHeight - 18).appendTooltip(Component.translatable("tooltip.arsmeteorites.explode")).drawBack(false);
+        widgets.addSlot(EmiStack.of(BlockRegistry.RITUAL_BLOCK.asItem()), 2, backgroundHeight - 18)
+                .appendTooltip(Component.translatable("tooltip.arsmeteorites.explode")).drawBack(false);
 
         widgets.addSlot(EmiStack.of(Ritual), 2, backgroundHeight - 34)
                 .appendTooltip(Component.translatable("tooltip.arsmeteorites.model" + recipe.model())).drawBack(false);
 
         if (recipe.input() != null) {
-            widgets.addSlot(EmiStack.of(recipe.input()), 2, backgroundHeight - 50).appendTooltip(Component.translatable("tooltip.arsmeteorites.input")).drawBack(false);
+            widgets.addSlot(EmiStack.of(recipe.input()), 2, backgroundHeight - 50)
+                    .appendTooltip(Component.translatable("tooltip.arsmeteorites.input")).drawBack(false);
         }
 
         widgets.addSlot(EmiStack.of(recipe.consumeitem()), 18, backgroundHeight - 34)
-                .appendTooltip(Component.translatable("tooltip.arsmeteorites.source_gem")).recipeContext(this).drawBack(false);
+                .appendTooltip(Component.translatable("tooltip.arsmeteorites.source_gem")).recipeContext(this)
+                .drawBack(false);
 
         widgets.addText(
                 Component.translatable("jei.arsmeteorites.source_cost", recipe.source()),
                 20, backgroundHeight - 12, 0xFFFFFF, false);
 
-        ResourceLocation texture = new ResourceLocation(ArsMeteorites.MOD_ID, "textures/gui/direction.png");
+        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(ArsMeteorites.MOD_ID,
+                "textures/gui/direction.png");
         widgets.addTexture(texture, 2, 2, 16, 16, 0, 0, 48, 48, 48, 48)
                 .tooltipText(List.of(Component.translatable("tooltip.arsmeteorites.direction")));
     }

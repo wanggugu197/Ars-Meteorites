@@ -59,11 +59,13 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
     }
 
     @Override
-    public void draw(RecipeRegistry.MeteoriteType recipe, @NotNull IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(RecipeRegistry.MeteoriteType recipe, @NotNull IRecipeSlotsView recipeSlotsView,
+                     GuiGraphics guiGraphics, double mouseX, double mouseY) {
         Component costText = Component.translatable("jei.arsmeteorites.source_cost", recipe.source());
         guiGraphics.drawString(font, costText, 20, background.getHeight() - 12, 0xFFFFFF, false);
 
-        ResourceLocation bigTexture = new ResourceLocation(ArsMeteorites.MOD_ID, "textures/gui/direction.png");
+        ResourceLocation bigTexture = ResourceLocation.fromNamespaceAndPath(ArsMeteorites.MOD_ID,
+                "textures/gui/direction.png");
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(2, 2, 0);
         guiGraphics.pose().scale(0.33f, 0.33f, 1.0f);
@@ -72,14 +74,16 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
     }
 
     @Override
-    public void getTooltip(@NotNull ITooltipBuilder tooltip, RecipeRegistry.@NotNull MeteoriteType recipe, @NotNull IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+    public void getTooltip(@NotNull ITooltipBuilder tooltip, RecipeRegistry.@NotNull MeteoriteType recipe,
+                           @NotNull IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         if (mouseX >= 2 && mouseX < 18 && mouseY >= 2 && mouseY < 18) {
             tooltip.add(Component.translatable("tooltip.arsmeteorites.direction"));
         }
     }
 
     @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, RecipeRegistry.MeteoriteType recipe, @NotNull IFocusGroup focuses) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, RecipeRegistry.MeteoriteType recipe,
+                          @NotNull IFocusGroup focuses) {
         int backgroundWidth = 150;
         int backgroundHeight = 160;
 
@@ -115,7 +119,9 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
                 int itemIndex = meteorites.length - remainingItems + i;
 
                 builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
-                        .addItemStack(new ItemStack(meteorites[itemIndex])).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex])));
+                        .addItemStack(new ItemStack(meteorites[itemIndex]))
+                        .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(
+                                Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex])));
             }
 
             remainingItems -= itemsInThisCircle;
@@ -123,18 +129,25 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
         }
 
         builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 2, backgroundHeight - 18)
-                .addItemStack(new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.explode")));
+                .addItemStack(new ItemStack(BlockRegistry.RITUAL_BLOCK.asItem()))
+                .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip
+                        .add(Component.translatable("tooltip.arsmeteorites.explode")));
 
         builder.addSlot(RecipeIngredientRole.CATALYST, 2, backgroundHeight - 34)
                 .addItemStack(new ItemStack(ArsMeteorites.getItem(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites")))
-                .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.model" + recipe.model())));
+                .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip
+                        .add(Component.translatable("tooltip.arsmeteorites.model" + recipe.model())));
 
         if (recipe.input() != null) {
             builder.addSlot(RecipeIngredientRole.INPUT, 2, backgroundHeight - 50)
-                    .addItemStack(new ItemStack(recipe.input())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.input")));
+                    .addItemStack(new ItemStack(recipe.input()))
+                    .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip
+                            .add(Component.translatable("tooltip.arsmeteorites.input")));
         }
 
         builder.addSlot(RecipeIngredientRole.CATALYST, 18, backgroundHeight - 34)
-                .addItemStack(new ItemStack(recipe.consumeitem())).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.source_gem")));
+                .addItemStack(new ItemStack(recipe.consumeitem()))
+                .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip
+                        .add(Component.translatable("tooltip.arsmeteorites.source_gem")));
     }
 }

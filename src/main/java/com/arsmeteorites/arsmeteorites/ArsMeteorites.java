@@ -1,19 +1,20 @@
 package com.arsmeteorites.arsmeteorites;
 
+import com.arsmeteorites.arsmeteorites.common.ConjureMeteoritesRitual;
 import com.arsmeteorites.arsmeteorites.common.explode.EntityRegistry;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 
+import com.hollingsworth.arsnouveau.setup.registry.APIRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,10 +25,10 @@ public class ArsMeteorites {
     public static final String NAME = "Ars Meteorites";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
-    public ArsMeteorites() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, MeteoriteRitualConfig.SPEC, "arsmeteorites-ritual.toml");
+    public ArsMeteorites(IEventBus modEventBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.COMMON, MeteoriteRitualConfig.SPEC, "arsmeteorites-ritual.toml");
 
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        APIRegistry.registerRitual(new ConjureMeteoritesRitual());
 
         EntityRegistry.init();
     }
@@ -37,20 +38,21 @@ public class ArsMeteorites {
     }
 
     public static Item getItem(String s) {
-        return getItem(new ResourceLocation(s));
+        return getItem(ResourceLocation.parse(s));
     }
 
     public static Item getItem(String mod, String name) {
-        return getItem(new ResourceLocation(mod, name));
+        return getItem(ResourceLocation.fromNamespaceAndPath(mod, name));
     }
 
     public static Item getItem(ResourceLocation id) {
-        Item i = ForgeRegistries.ITEMS.getValue(id);
+        Item i = BuiltInRegistries.ITEM.get(id);
         if (i == Items.AIR) return Items.BARRIER;
         return i;
     }
 
     public static Block getBlock(String s) {
-        return ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+        ResourceLocation id = ResourceLocation.parse(s);
+        return BuiltInRegistries.BLOCK.get(id);
     }
 }

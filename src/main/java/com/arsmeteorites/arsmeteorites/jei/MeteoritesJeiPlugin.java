@@ -17,11 +17,12 @@ import java.util.List;
 @JeiPlugin
 public class MeteoritesJeiPlugin implements IModPlugin {
 
-    public static final RecipeType<RecipeRegistry.MeteoriteType> METEORITES_RECIPE_TYPE = RecipeType.create(ArsMeteorites.MOD_ID, "meteorites", RecipeRegistry.MeteoriteType.class);
+    public static final RecipeType<RecipeRegistry.MeteoriteType> METEORITES_RECIPE_TYPE = RecipeType
+            .create(ArsMeteorites.MOD_ID, "meteorites", RecipeRegistry.MeteoriteType.class);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
-        return new ResourceLocation(ArsMeteorites.MOD_ID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(ArsMeteorites.MOD_ID, "jei_plugin");
     }
 
     @Override

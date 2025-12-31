@@ -30,7 +30,8 @@ public final class SphereExplosion {
 
         if (this.level.isClientSide) {
             float soundPitch = (1.0f + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2f) * 0.7f;
-            this.level.playLocalSound(x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0f, soundPitch, false);
+            this.level.playLocalSound(x, y, z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4.0f,
+                    soundPitch, false);
         }
 
         this.level.gameEvent(null, GameEvent.EXPLODE, new Vec3(x, y, z));
@@ -49,7 +50,7 @@ public final class SphereExplosion {
 
         for (Entity entity : entities) {
             double distanceToSqr = entity.distanceToSqr(explosionPosition);
-            if (entity.ignoreExplosion() || distanceToSqr > f2Squared) {
+            if (distanceToSqr > f2Squared) {
                 continue;
             }
 
@@ -84,7 +85,8 @@ public final class SphereExplosion {
                 for (int z = -surfaceLayerEnd; z <= surfaceLayerEnd; z++) {
                     int zSquared = z * z;
                     int distanceSquared = xSquared + ySquared + zSquared;
-                    if (distanceSquared < surfaceLayerStartSquared || distanceSquared > surfaceLayerEndSquared) continue;
+                    if (distanceSquared < surfaceLayerStartSquared || distanceSquared > surfaceLayerEndSquared)
+                        continue;
                     BlockPos pos = center.offset(x, y, z);
                     BlockState state = level.getBlockState(pos);
                     if (state.isAir() || (state.getBlock() == Blocks.BEDROCK)) continue;

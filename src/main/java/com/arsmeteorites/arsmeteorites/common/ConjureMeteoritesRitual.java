@@ -186,7 +186,8 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
             if (CurrentRadius >= TargetRadius) setFinished();
 
-            if (world.getGameTime() % (((long) CurrentRadius * CurrentRadius / 500) + 1) == 0 && isCenterCheck && sourceCostNeeded == 0) {
+            if (world.getGameTime() % (((long) CurrentRadius * CurrentRadius / 500) + 1) == 0 && isCenterCheck &&
+                    sourceCostNeeded == 0) {
                 generateMeteoriteLayer(world, center, CurrentRadius, (double) CurrentRadius / TargetRadius);
                 sourceCostNeeded = Math.max(1, (long) (Number_of_blocks[CurrentRadius + 1] * SourceCost));
                 CurrentRadius++;
@@ -196,8 +197,10 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         }
 
         if (world != null) {
-            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 2.0f, 1.0f);
-            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 8.0f, 0.5f);
+            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS,
+                    2.0f, 1.0f);
+            world.playSound(null, Objects.requireNonNull(getPos()), SoundEvents.GENERIC_EXPLODE.value(),
+                    SoundSource.BLOCKS, 8.0f, 0.5f);
         }
     }
 
@@ -214,23 +217,29 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         int innerRadiusSq = (CurrentRadius - 1) * (CurrentRadius - 1);
 
         if (model == 0) {
-            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq, (pos) -> fastSetBlock(serverLevel, pos, getRandomMeteoriteBlock()));
+            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq,
+                    (pos) -> fastSetBlock(serverLevel, pos, getRandomMeteoriteBlock()));
         } else if (model == 1) {
             BlockState MeteoriteBlock = getFixedBlockForLayer(proportion);
-            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq, (pos) -> fastSetBlock(serverLevel, pos, MeteoriteBlock));
+            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq,
+                    (pos) -> fastSetBlock(serverLevel, pos, MeteoriteBlock));
         } else if (model == 2) {
             BlockState MeteoriteBlock = getRandomMeteoriteBlock();
-            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq, (pos) -> fastSetBlock(serverLevel, pos, MeteoriteBlock));
+            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq,
+                    (pos) -> fastSetBlock(serverLevel, pos, MeteoriteBlock));
         } else if (model == 3) {
             int Layer = getLayeredMeteoriteBlockA(proportion);
-            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq, (pos) -> fastSetBlock(serverLevel, pos, getLayeredMeteoriteBlockB(Layer)));
+            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq,
+                    (pos) -> fastSetBlock(serverLevel, pos, getLayeredMeteoriteBlockB(Layer)));
         } else if (model == 4) {
             BlockState MeteoriteBlock = getLayeredMeteoriteBlockB(getLayeredMeteoriteBlockA(proportion));
-            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq, (pos) -> fastSetBlock(serverLevel, pos, MeteoriteBlock));
+            iterateSphereBlocks(center, CurrentRadius, radiusSq, innerRadiusSq,
+                    (pos) -> fastSetBlock(serverLevel, pos, MeteoriteBlock));
         }
     }
 
-    private void iterateSphereBlocks(BlockPos center, int CurrentRadius, int radiusSq, int innerRadiusSq, java.util.function.Consumer<BlockPos> blockAction) {
+    private void iterateSphereBlocks(BlockPos center, int CurrentRadius, int radiusSq, int innerRadiusSq,
+                                     java.util.function.Consumer<BlockPos> blockAction) {
         for (int x = -CurrentRadius; x <= CurrentRadius; x++) {
             int xSq = x * x;
 
@@ -443,7 +452,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         setNeedsSource(true);
         while (sourceCostNeeded > 0) {
             int amountToTake = (int) Math.min(sourceCostNeeded, 5000);
-            if (SourceUtil.takeSource(center, world, 6, amountToTake) == null) return;
+            if (SourceUtil.takeSourceMultiple(center, world, 6, amountToTake) == null) return;
             sourceCostNeeded -= amountToTake;
         }
         setNeedsSource(false);
@@ -461,8 +470,10 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
         BlockState oldState = section.getBlockState(localX, localY, localZ);
         if (!oldState.isAir() || newState.isAir()) return;
         section.setBlockState(localX, localY, localZ, newState);
-        Heightmap.Types[] heightmapTypes = { Heightmap.Types.MOTION_BLOCKING, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Heightmap.Types.OCEAN_FLOOR, Heightmap.Types.WORLD_SURFACE };
-        for (Heightmap.Types type : heightmapTypes) chunk.getOrCreateHeightmapUnprimed(type).update(localX, y, localZ, newState);
+        Heightmap.Types[] heightmapTypes = { Heightmap.Types.MOTION_BLOCKING, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                Heightmap.Types.OCEAN_FLOOR, Heightmap.Types.WORLD_SURFACE };
+        for (Heightmap.Types type : heightmapTypes)
+            chunk.getOrCreateHeightmapUnprimed(type).update(localX, y, localZ, newState);
         if (LightEngine.hasDifferentLightProperties(level, pos, oldState, newState)) {
             chunk.getSkyLightSources().update(level, localX, localY, localZ);
             level.getChunkSource().getLightEngine().checkBlock(pos);
@@ -495,8 +506,11 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
             int l = pos.getZ() & 15;
             var old = levelchunksection.setBlockState(j, k, l, state);
             if (old.isAir()) return;
-            Heightmap.Types[] heightmapTypes = { Heightmap.Types.MOTION_BLOCKING, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Heightmap.Types.OCEAN_FLOOR, Heightmap.Types.WORLD_SURFACE };
-            for (Heightmap.Types type : heightmapTypes) levelchunk.getOrCreateHeightmapUnprimed(type).update(j, i, l, state);
+            Heightmap.Types[] heightmapTypes = { Heightmap.Types.MOTION_BLOCKING,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Heightmap.Types.OCEAN_FLOOR,
+                    Heightmap.Types.WORLD_SURFACE };
+            for (Heightmap.Types type : heightmapTypes)
+                levelchunk.getOrCreateHeightmapUnprimed(type).update(j, i, l, state);
             if (LightEngine.hasDifferentLightProperties(level, pos, old, state)) {
                 levelchunk.getSkyLightSources().update(level, j, i, l);
                 level.getChunkSource().getLightEngine().checkBlock(pos);
@@ -520,7 +534,7 @@ public class ConjureMeteoritesRitual extends AbstractRitual {
 
     @Override
     public ResourceLocation getRegistryName() {
-        return new ResourceLocation(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites");
+        return ResourceLocation.fromNamespaceAndPath(ArsMeteorites.MOD_ID, "ritual_conjure_meteorites");
     }
 
     @Override
