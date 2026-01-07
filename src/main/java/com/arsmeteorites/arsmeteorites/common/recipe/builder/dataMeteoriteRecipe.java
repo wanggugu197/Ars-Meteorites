@@ -16,7 +16,7 @@ public record dataMeteoriteRecipe(
 
     public static dataMeteoriteRecipe fromJson(JsonObject json) {
         String inputItemId = GsonHelper.getAsString(json, "input");
-        double source = GsonHelper.getAsInt(json, "source");
+        double source = GsonHelper.getAsDouble(json, "source");
 
         int model = GsonHelper.getAsInt(json, "model", 0);
 

@@ -1,13 +1,13 @@
 modLoader="javafml"
 loaderVersion="[4,)"
-license="GNU GPLv3.0"
+license="GNU Lesser General Public License version 3"
 
 [[mods]]
 modId="arsmeteorites"
-version="1.1.5"
+version="1.1.6"
 displayName="Ars Meteorites"
 description="An addon for Ars Nouveau adding meteorite magic"
-displayURL = "${mod_url}"
+displayURL ="https://github.com/wanggugu197/Ars-Meteorites"
 authors="maple197"
 credits=""
 
