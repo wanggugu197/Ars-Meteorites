@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
 
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import dev.emi.emi.api.recipe.EmiRecipe;
@@ -105,8 +106,12 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
                 int y = centerY + (int) (radius * Math.sin(angle));
 
                 int itemIndex = meteorites.length - remainingItems + i;
+                Block meteoriteBlock = meteorites[itemIndex];
 
-                widgets.addSlot(EmiStack.of(meteorites[itemIndex]), x, y)
+                // 创建适配流体/物品的EmiStack
+                EmiStack emiStack = createEmiStackForBlock(meteoriteBlock);
+
+                widgets.addSlot(emiStack, x, y)
                         .appendTooltip(
                                 Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex]))
                         .recipeContext(this).drawBack(false);
@@ -139,5 +144,11 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
                 "textures/gui/direction.png");
         widgets.addTexture(texture, 2, 2, 16, 16, 0, 0, 48, 48, 48, 48)
                 .tooltipText(List.of(Component.translatable("tooltip.arsmeteorites.direction")));
+    }
+
+    private EmiStack createEmiStackForBlock(Block block) {
+        if (block == null) return EmiStack.EMPTY;
+        if (block instanceof LiquidBlock fluidBlock) return EmiStack.of(fluidBlock.fluid);
+        return EmiStack.of(block.asItem());
     }
 }

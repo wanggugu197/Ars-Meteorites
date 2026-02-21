@@ -11,13 +11,6 @@ neoForge {
         mappingsVersion = libs.versions.parchment.get()
     }
 
-    // This line is optional. Access Transformers are automatically detected
-    accessTransformers {
-        var file = project.file('src/main/resources/META-INF/accesstransformer.cfg')
-        from(file)
-        publish(file)
-    }
-
     addModdingDependenciesTo(sourceSets.test)
 //    addModdingDependenciesTo(sourceSets.extra)
 

@@ -4,8 +4,8 @@ dependencies {
     api(annotationProcessor("io.github.llamalad7:mixinextras-common:$project.mixinextras_version"))
     annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
 
-    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${project.minecraft_version}:5.10.6.1256")
-    runtimeOnly("curse.maven:ars-nouveau-401955:7100043")
+    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${project.minecraft_version}:5.11.2.1298")
+    runtimeOnly("curse.maven:ars-nouveau-401955:7634235")
 
     implementation("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${project.geckolib_version}")
     implementation("top.theillusivec4.curios:curios-neoforge:${project.curiosVersion}+${project.minecraft_version}")
