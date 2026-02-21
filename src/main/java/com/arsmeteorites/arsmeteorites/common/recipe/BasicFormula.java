@@ -70,13 +70,13 @@ public class BasicFormula {
                 new Block[] {
                         Blocks.NETHERRACK, Blocks.BLACKSTONE, Blocks.BASALT, Blocks.MAGMA_BLOCK,
                         Blocks.SOUL_SAND, Blocks.SOUL_SOIL, Blocks.GLOWSTONE, Blocks.SHROOMLIGHT,
-                        Blocks.NETHER_QUARTZ_ORE, Blocks.NETHER_GOLD_ORE, Blocks.GILDED_BLACKSTONE,
+                        Blocks.NETHER_QUARTZ_ORE, Blocks.NETHER_GOLD_ORE, Blocks.GILDED_BLACKSTONE, Blocks.LAVA,
                         Blocks.CRACKED_NETHER_BRICKS, Blocks.CHISELED_NETHER_BRICKS, Blocks.RED_NETHER_BRICKS
                 },
                 new int[] {
                         200, 180, 150, 120,
                         50, 40, 30, 25,
-                        20, 15, 15,
+                        20, 15, 15, 10,
                         2, 1, 1
                 });
 
@@ -207,13 +207,13 @@ public class BasicFormula {
                 Items.NETHERITE_SCRAP, 200, 0,
                 new Block[] {
                         Blocks.ANCIENT_DEBRIS, Blocks.NETHERITE_BLOCK,
-                        Blocks.BASALT, Blocks.BLACKSTONE,
+                        Blocks.BASALT, Blocks.BLACKSTONE, Blocks.LAVA,
                         Blocks.MAGMA_BLOCK, Blocks.SOUL_SAND,
                         Blocks.CRYING_OBSIDIAN, Blocks.LODESTONE
                 },
                 new int[] {
                         35, 5,
-                        30, 25,
+                        30, 25, 15,
                         15, 10,
                         3, 2
                 });

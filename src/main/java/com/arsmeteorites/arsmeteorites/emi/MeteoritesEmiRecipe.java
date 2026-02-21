@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
 
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import dev.emi.emi.api.recipe.EmiRecipe;
@@ -105,8 +106,10 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
                 int y = centerY + (int) (radius * Math.sin(angle));
 
                 int itemIndex = meteorites.length - remainingItems + i;
+                Block meteoriteBlock = meteorites[itemIndex];
+                EmiStack emiStack = createEmiStackForBlock(meteoriteBlock);
 
-                widgets.addSlot(EmiStack.of(meteorites[itemIndex]), x, y)
+                widgets.addSlot(emiStack, x, y)
                         .appendTooltip(Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex])).recipeContext(this).drawBack(false);
             }
 
@@ -133,5 +136,11 @@ public class MeteoritesEmiRecipe implements EmiRecipe {
         ResourceLocation texture = new ResourceLocation(ArsMeteorites.MOD_ID, "textures/gui/direction.png");
         widgets.addTexture(texture, 2, 2, 16, 16, 0, 0, 48, 48, 48, 48)
                 .tooltipText(List.of(Component.translatable("tooltip.arsmeteorites.direction")));
+    }
+
+    private EmiStack createEmiStackForBlock(Block block) {
+        if (block == null) return EmiStack.EMPTY;
+        if (block instanceof LiquidBlock fluidBlock) return EmiStack.of(fluidBlock.getFluid());
+        return EmiStack.of(block.asItem());
     }
 }

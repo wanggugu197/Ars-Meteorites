@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
 
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -114,8 +115,19 @@ public class MeteoritesRecipeCategory implements IRecipeCategory<RecipeRegistry.
 
                 int itemIndex = meteorites.length - remainingItems + i;
 
-                builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
-                        .addItemStack(new ItemStack(meteorites[itemIndex])).addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(Component.translatable("tooltip.arsmeteorites.probability", probabilities[itemIndex])));
+                if (meteorites[itemIndex] instanceof LiquidBlock fluidBlock) {
+                    builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                            .addFluidStack(fluidBlock.getFluid())
+                            .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(
+                                    Component.translatable("tooltip.arsmeteorites.probability",
+                                            probabilities[itemIndex])));
+                } else {
+                    builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                            .addItemStack(new ItemStack(meteorites[itemIndex]))
+                            .addRichTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(
+                                    Component.translatable("tooltip.arsmeteorites.probability",
+                                            probabilities[itemIndex])));
+                }
             }
 
             remainingItems -= itemsInThisCircle;

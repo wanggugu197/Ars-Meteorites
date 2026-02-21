@@ -4,7 +4,7 @@
     <a href="https://www.curseforge.com/minecraft/mc-mods/arsmeteorites"><img src="https://img.shields.io/badge/Available%20for-MC%201.21.1%20-informational?style=for-the-badge" alt="Supported Versions"></a>
     <br>    
     <a href="https://github.com/wanggugu197/arsmeteorites/blob/main/LICENSE"><img src="https://img.shields.io/badge/LICENSE-LGPL--v3.0-orange?style=for-the-badge" alt="License"></a>
-    <a href="https://www.curseforge.com/minecraft/mc-mods/arsmeteorites"><img src="https://cf.way2muchnoise.eu/1278083.svg?badge_style=for_the_badge" alt="CurseForge"></a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/ars-meteorites"><img src="https://cf.way2muchnoise.eu/1278083.svg?badge_style=for_the_badge" alt="CurseForge"></a>
 </h1>
 
 ## Introduction
