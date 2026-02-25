@@ -1,0 +1,17 @@
+{
+  "item.arsmeteorites.ritual_conjure_meteorites": "隕石呼出",
+  "arsmeteorites.ritual_desc.ritual_conjure_meteorites": "ワールドの内部機構から巨大な隕石を呼び出す。\nまず隕石の種類を選択するためのアイテムを使用し、次に隕石の半径を拡大するためのアイテムを使用する。\n実際に生成されたブロックの数でソースの使用量が決定する。",
+  "jei.category.arsmeteorites.meteorites": "隕石の召喚",
+  "jei.arsmeteorites.source_cost": "1ブロックあたりのソース:%s",
+  "emi.category.arsmeteorites.meteorites": "隕石の召喚",
+  "tooltip.arsmeteorites.probability": "確率の重み：%s",
+  "tooltip.arsmeteorites.explode": "爆発に注意",
+  "tooltip.arsmeteorites.source_gem": "隕石の半径を増加させるためのアイテム",
+  "tooltip.arsmeteorites.input": "隕石の種類を決定するためのアイテム",
+  "tooltip.arsmeteorites.direction": "隕石の中心位置を調整するためのアイテム",
+  "tooltip.arsmeteorites.model0": "隕石モデル：完全にランダムな隕石",
+  "tooltip.arsmeteorites.model1": "隕石モデル：層が固定された隕石",
+  "tooltip.arsmeteorites.model2": "隕石モデル：ランダムな層の隕石",
+  "tooltip.arsmeteorites.model3": "隕石モデル：層分けされたランダムな隕石",
+  "tooltip.arsmeteorites.model4": "隕石モデル：層の制限が欠けられたランダムな層の隕石"
+}
