@@ -1,0 +1,17 @@
+{
+  "item.arsmeteorites.ritual_conjure_meteorites": "Ритуал: Сотворение метеоритов",
+  "arsmeteorites.ritual_desc.ritual_conjure_meteorites": "Призывает метеорит из самых недр мироздания.\nСначала принесите в жертву предметы, чтобы выбрать тип метеорита, а затем — чтобы расширить радиус его падения.\nИсточник расходуется пропорционально количеству блоков у метеорита.",
+  "jei.category.arsmeteorites.meteorites": "Сотворение метеоритов",
+  "jei.arsmeteorites.source_cost": "%s Источника за блок",
+  "emi.category.arsmeteorites.meteorites": "Сотворение метеоритов",
+  "tooltip.arsmeteorites.probability": "Вес: %s",
+  "tooltip.arsmeteorites.explode": "Остерегайтесь взрывов",
+  "tooltip.arsmeteorites.source_gem": "Можно использовать для увеличения радиуса падения",
+  "tooltip.arsmeteorites.input": "Можно использовать для выбора типа метеорита",
+  "tooltip.arsmeteorites.direction": "Можно использовать для настройки центра падения",
+  "tooltip.arsmeteorites.model0": "Модель: Полностью случайные метеориты",
+  "tooltip.arsmeteorites.model1": "Модель: Фиксированные слои",
+  "tooltip.arsmeteorites.model2": "Модель: Случайные слои",
+  "tooltip.arsmeteorites.model3": "Модель: Послойно-случайные метеориты"
+  "tooltip.arsmeteorites.model4": "Модель: Случайные слои с ограничением по высоте"
+}
