@@ -10,9 +10,9 @@ dependencies {
     implementation("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${project.geckolib_version}")
     implementation("top.theillusivec4.curios:curios-neoforge:${project.curiosVersion}+${project.minecraft_version}")
 
-    compileOnly("mezz.jei:jei-$project.minecraft_version-neoforge:$project.jei_version")
+    implementation("mezz.jei:jei-$project.minecraft_version-neoforge:$project.jei_version")
 
-    compileOnly("dev.emi:emi-neoforge:${project.emi_version}")
+    implementation("dev.emi:emi-neoforge:${project.emi_version}")
 
     // implementation("appeng:appliedenergistics2-forge:15.4.5")
     // implementation("org.appliedenergistics:guideme:20.1.7")

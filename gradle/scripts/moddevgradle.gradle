@@ -11,6 +11,13 @@ neoForge {
         mappingsVersion = libs.versions.parchment.get()
     }
 
+    // This line is optional. Access Transformers are automatically detected
+    accessTransformers {
+        var file = project.file('src/main/resources/META-INF/accesstransformer.cfg')
+        from(file)
+        publish(file)
+    }
+
     addModdingDependenciesTo(sourceSets.test)
 //    addModdingDependenciesTo(sourceSets.extra)
 
@@ -108,7 +115,7 @@ neoForge {
             // "REGISTRYDUMP": For getting the contents of all registries.
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             // Enable assertions for our classes in dev environment
-            jvmArgument('-ea:com.ResourceFarm.ResourceFarm...')
+            jvmArgument('-ea:com.arsmeteorites.arsmeteorites...')
 
             // Recommended logging level for the console
             // You can set various levels here.

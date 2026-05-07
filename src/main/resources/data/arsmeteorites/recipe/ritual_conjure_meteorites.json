@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
     {
       "item": "ars_nouveau:red_archwood_log"
@@ -30,6 +31,7 @@
     }
   ],
   "result": {
-    "item": "arsmeteorites:ritual_conjure_meteorites"
+    "id": "arsmeteorites:ritual_conjure_meteorites",
+    "count": 1
   }
 }
