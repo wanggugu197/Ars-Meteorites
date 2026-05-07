@@ -4,7 +4,7 @@ license="GNU Lesser General Public License version 3"
 
 [[mods]]
 modId="arsmeteorites"
-version="1.1.10"
+version="1.1.11"
 displayName="Ars Meteorites"
 description="An addon for Ars Nouveau adding meteorite magic"
 displayURL ="https://github.com/wanggugu197/Ars-Meteorites"
