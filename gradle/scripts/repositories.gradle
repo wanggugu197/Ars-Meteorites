@@ -25,4 +25,6 @@ repositories {
     maven {
         url "https://mvnrepository.com/artifact/com.hollingsworth.ars_nouveau"
     }
+    maven { url = "https://neoforged.forgecdn.net/releases" }
+    maven { url = "https://neoforged.forgecdn.net/mojang-meta" }
 }
