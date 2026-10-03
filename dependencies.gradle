@@ -4,7 +4,7 @@ dependencies {
     api(annotationProcessor("io.github.llamalad7:mixinextras-common:$project.mixinextras_version"))
     annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
 
-    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${project.minecraft_version}:5.11.2.1298")
+    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${project.minecraft_version}:5.13.2.1418")
     runtimeOnly("curse.maven:ars-nouveau-401955:7634235")
 
     implementation("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${project.geckolib_version}")
